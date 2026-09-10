@@ -1,0 +1,899 @@
+{
+  "schemaVersion": 1,
+  "site": {
+    "name": "VALIE",
+    "mark": "®",
+    "year": "2026",
+    "email": "vaileedits920@gmail.com",
+    "availability": {
+      "enabled": true,
+      "label": "AVAILABLE FOR SELECT PROJECTS"
+    },
+    "seo": {
+      "title": "VALIE — Creative Editor & Web Designer",
+      "description": "VALIE is a video editor, designer, and web creator showcasing long-form edits, short-form content, interactive websites, and selected client work.",
+      "keywords": [
+        "video editor portfolio",
+        "long-form video editing",
+        "short-form video editing",
+        "web design",
+        "web development",
+        "creative portfolio"
+      ],
+      "creator": "VALIE",
+      "defaultOgLabel": "VIDEO / DESIGN / DEVELOPMENT"
+    },
+    "hero": {
+      "eyebrow": "PORTFOLIO / 2026",
+      "lines": [
+        "VIDEO.",
+        "DESIGN.",
+        "EXPERIENCE."
+      ],
+      "intro": "A multidisciplinary creative focused on long-form content, short-form storytelling, and interactive web experiences."
+    },
+    "footer": {
+      "cta": "LET'S WORK.",
+      "disciplines": "Long-form / Short-form / Web"
+    },
+    "socials": []
+  },
+  "home": {
+    "selectedTitle": "Three disciplines.\nOne visual language.",
+    "selectedEyebrow": "SELECTED WORK",
+    "disciplineIntro": "Different formats need different rhythms. Each service has its own dedicated portfolio experience instead of being squeezed into one generic grid.",
+    "statementEyebrow": "APPROACH / CONTROLLED MOTION",
+    "statementTitle": "The portfolio should feel like part of the work—not a container around it.",
+    "statementCopy": "Typography, pacing, media, and responsive behavior are treated as one system. Nothing moves just because it can."
+  },
+  "work": {
+    "eyebrow": "WORK / ALL PROJECTS",
+    "title": [
+      "SELECTED",
+      "WORK."
+    ],
+    "description": "A cross-section of editing, motion, storytelling, UI/UX and frontend work. Use the discipline pages when you want a more focused view.",
+    "contactBand": "HAVE A PROJECT IN MIND?",
+    "contactCta": "START A CONVERSATION"
+  },
+  "about": {
+    "eyebrow": "ABOUT / MULTIDISCIPLINARY",
+    "title": [
+      "EDIT.",
+      "DESIGN.",
+      "BUILD."
+    ],
+    "description": "I work across moving image and interactive design, with the same priority in both: make the experience clear, controlled, and memorable.",
+    "aside": "CREATIVE / 2026",
+    "philosophy": "Good editing and good interface design solve the same problem: what should someone notice next?",
+    "approach": "I start with hierarchy and rhythm before decoration. For video, that means story, pacing, sound and visual emphasis. For websites, it means structure, typography, responsive behavior and interaction. Motion comes after the reason for motion is clear.",
+    "focus": "Long-form storytelling, vertical content, responsive portfolio and brand websites, interaction design, motion systems, and the details that make digital work feel authored rather than assembled.",
+    "skills": [
+      {
+        "title": "VIDEO",
+        "detail": "Premiere Pro / After Effects / DaVinci Resolve"
+      },
+      {
+        "title": "DESIGN",
+        "detail": "Photoshop / Figma / Art Direction"
+      },
+      {
+        "title": "WEB",
+        "detail": "React / Next.js / TypeScript / CSS / Motion"
+      }
+    ],
+    "ctaTitle": "Have something\nworth making?",
+    "ctaLabel": "LET'S TALK"
+  },
+  "contact": {
+    "eyebrow": "CONTACT / START A PROJECT",
+    "title": [
+      "LET'S BUILD",
+      "SOMETHING",
+      "GREAT."
+    ],
+    "description": "Tell me what you are making, the format, and what success should feel like.",
+    "projectTypes": [
+      "Long-Form Editing",
+      "Short-Form Editing",
+      "Website Design",
+      "Website Development",
+      "Other"
+    ],
+    "budgetRanges": [
+      "Under $500",
+      "$500 — $1,500",
+      "$1,500 — $3,000",
+      "$3,000+"
+    ],
+    "successMessage": "Thanks — your inquiry is ready to send."
+  },
+  "projects": [
+    {
+      "slug": "sequence-01-13",
+      "order": 1,
+      "status": "published",
+      "featured": true,
+      "featuredOrder": 1,
+      "category": "long",
+      "title": "Sequence 01 13",
+      "client": "",
+      "year": "2026",
+      "runtime": "05:06",
+      "role": "Long-Form Video Editing",
+      "format": "16:9 / LONG-FORM",
+      "description": "Long-form video edit focused on pacing, editorial timing, and controlled visual transitions.",
+      "challenge": "Maintain clarity and momentum across a longer edit while keeping the visual treatment consistent.",
+      "approach": "Focused on pacing, clean editorial timing, readable visual structure, and controlled transitions.",
+      "result": "A complete long-form portfolio piece presented in its original 16:9 composition.",
+      "tools": [
+        "Premiere Pro",
+        "After Effects"
+      ],
+      "services": [
+        "Long-Form Editing",
+        "Pacing",
+        "Post-Production"
+      ],
+      "media": {
+        "hero": "/media/work-posters/sequence-01-13.webp",
+        "previewVideo": "/media/long-form/sequence-01-13.mp4",
+        "hoverVideo": "/media/long-form/sequence-01-13-hover.mp4",
+        "frames": [
+          {
+            "src": "/media/long-form/sequence-01-13-frame-1.jpg",
+            "alt": "Sequence 01 13 frame 1",
+            "label": "FRAME 01"
+          },
+          {
+            "src": "/media/long-form/sequence-01-13-frame-2.jpg",
+            "alt": "Sequence 01 13 frame 2",
+            "label": "FRAME 02"
+          },
+          {
+            "src": "/media/long-form/sequence-01-13-frame-3.jpg",
+            "alt": "Sequence 01 13 frame 3",
+            "label": "FRAME 03"
+          }
+        ],
+        "playbackUrl": "https://youtu.be/X1JdimtL58U"
+      },
+      "links": []
+    },
+    {
+      "slug": "sequence-01-12",
+      "order": 2,
+      "status": "published",
+      "featured": false,
+      "featuredOrder": 99,
+      "category": "long",
+      "title": "Sequence 01 12",
+      "client": "",
+      "year": "2026",
+      "runtime": "05:06",
+      "role": "Long-Form Video Editing",
+      "format": "16:9 / LONG-FORM",
+      "description": "Long-form video edit focused on pacing, editorial timing, and controlled visual transitions.",
+      "challenge": "Maintain clarity and momentum across a longer edit while keeping the visual treatment consistent.",
+      "approach": "Focused on pacing, clean editorial timing, readable visual structure, and controlled transitions.",
+      "result": "A complete long-form portfolio piece presented in its original 16:9 composition.",
+      "tools": [
+        "Premiere Pro",
+        "After Effects"
+      ],
+      "services": [
+        "Long-Form Editing",
+        "Pacing",
+        "Post-Production"
+      ],
+      "media": {
+        "hero": "/media/work-posters/sequence-01-12.webp",
+        "previewVideo": "/media/long-form/sequence-01-12.mp4",
+        "hoverVideo": "/media/long-form/sequence-01-12-hover.mp4",
+        "frames": [
+          {
+            "src": "/media/long-form/sequence-01-12-frame-1.jpg",
+            "alt": "Sequence 01 12 frame 1",
+            "label": "FRAME 01"
+          },
+          {
+            "src": "/media/long-form/sequence-01-12-frame-2.jpg",
+            "alt": "Sequence 01 12 frame 2",
+            "label": "FRAME 02"
+          },
+          {
+            "src": "/media/long-form/sequence-01-12-frame-3.jpg",
+            "alt": "Sequence 01 12 frame 3",
+            "label": "FRAME 03"
+          }
+        ],
+        "playbackUrl": "https://youtu.be/cx2EJ228VUM"
+      },
+      "links": []
+    },
+    {
+      "slug": "sequence-01-10",
+      "order": 3,
+      "status": "published",
+      "featured": false,
+      "featuredOrder": 99,
+      "category": "long",
+      "title": "Sequence 01 10",
+      "client": "",
+      "year": "2026",
+      "runtime": "00:37",
+      "role": "Long-Form Video Editing",
+      "format": "16:9 / LONG-FORM",
+      "description": "Long-form video edit focused on pacing, editorial timing, and controlled visual transitions.",
+      "challenge": "Maintain clarity and momentum across a longer edit while keeping the visual treatment consistent.",
+      "approach": "Focused on pacing, clean editorial timing, readable visual structure, and controlled transitions.",
+      "result": "A complete long-form portfolio piece presented in its original 16:9 composition.",
+      "tools": [
+        "Premiere Pro",
+        "After Effects"
+      ],
+      "services": [
+        "Long-Form Editing",
+        "Pacing",
+        "Post-Production"
+      ],
+      "media": {
+        "hero": "/media/work-posters/sequence-01-10.webp",
+        "previewVideo": "/media/long-form/sequence-01-10.mp4",
+        "hoverVideo": "/media/long-form/sequence-01-10-hover.mp4",
+        "frames": [
+          {
+            "src": "/media/long-form/sequence-01-10-frame-1.jpg",
+            "alt": "Sequence 01 10 frame 1",
+            "label": "FRAME 01"
+          },
+          {
+            "src": "/media/long-form/sequence-01-10-frame-2.jpg",
+            "alt": "Sequence 01 10 frame 2",
+            "label": "FRAME 02"
+          },
+          {
+            "src": "/media/long-form/sequence-01-10-frame-3.jpg",
+            "alt": "Sequence 01 10 frame 3",
+            "label": "FRAME 03"
+          }
+        ],
+        "playbackUrl": "https://youtu.be/NPC9f0Zv3jU"
+      },
+      "links": []
+    },
+    {
+      "slug": "sequence-01-9",
+      "order": 4,
+      "status": "published",
+      "featured": false,
+      "featuredOrder": 99,
+      "category": "long",
+      "title": "Sequence 01 9",
+      "client": "",
+      "year": "2026",
+      "runtime": "02:20",
+      "role": "Long-Form Video Editing",
+      "format": "16:9 / LONG-FORM",
+      "description": "Long-form video edit focused on pacing, editorial timing, and controlled visual transitions.",
+      "challenge": "Maintain clarity and momentum across a longer edit while keeping the visual treatment consistent.",
+      "approach": "Focused on pacing, clean editorial timing, readable visual structure, and controlled transitions.",
+      "result": "A complete long-form portfolio piece presented in its original 16:9 composition.",
+      "tools": [
+        "Premiere Pro",
+        "After Effects"
+      ],
+      "services": [
+        "Long-Form Editing",
+        "Pacing",
+        "Post-Production"
+      ],
+      "media": {
+        "hero": "/media/work-posters/sequence-01-9.webp",
+        "previewVideo": "/media/long-form/sequence-01-9.mp4",
+        "hoverVideo": "/media/long-form/sequence-01-9-hover.mp4",
+        "frames": [
+          {
+            "src": "/media/long-form/sequence-01-9-frame-1.jpg",
+            "alt": "Sequence 01 9 frame 1",
+            "label": "FRAME 01"
+          },
+          {
+            "src": "/media/long-form/sequence-01-9-frame-2.jpg",
+            "alt": "Sequence 01 9 frame 2",
+            "label": "FRAME 02"
+          },
+          {
+            "src": "/media/long-form/sequence-01-9-frame-3.jpg",
+            "alt": "Sequence 01 9 frame 3",
+            "label": "FRAME 03"
+          }
+        ],
+        "playbackUrl": "https://youtu.be/VVwmbYDFOhM"
+      },
+      "links": []
+    },
+    {
+      "slug": "sequence-01-8",
+      "order": 5,
+      "status": "published",
+      "featured": false,
+      "featuredOrder": 99,
+      "category": "long",
+      "title": "Sequence 01 8",
+      "client": "",
+      "year": "2026",
+      "runtime": "00:19",
+      "role": "Long-Form Video Editing",
+      "format": "16:9 / LONG-FORM",
+      "description": "Long-form video edit focused on pacing, editorial timing, and controlled visual transitions.",
+      "challenge": "Maintain clarity and momentum across a longer edit while keeping the visual treatment consistent.",
+      "approach": "Focused on pacing, clean editorial timing, readable visual structure, and controlled transitions.",
+      "result": "A complete long-form portfolio piece presented in its original 16:9 composition.",
+      "tools": [
+        "Premiere Pro",
+        "After Effects"
+      ],
+      "services": [
+        "Long-Form Editing",
+        "Pacing",
+        "Post-Production"
+      ],
+      "media": {
+        "hero": "/media/work-posters/sequence-01-8.webp",
+        "previewVideo": "/media/long-form/sequence-01-8.mp4",
+        "hoverVideo": "/media/long-form/sequence-01-8-hover.mp4",
+        "frames": [
+          {
+            "src": "/media/long-form/sequence-01-8-frame-1.jpg",
+            "alt": "Sequence 01 8 frame 1",
+            "label": "FRAME 01"
+          },
+          {
+            "src": "/media/long-form/sequence-01-8-frame-2.jpg",
+            "alt": "Sequence 01 8 frame 2",
+            "label": "FRAME 02"
+          },
+          {
+            "src": "/media/long-form/sequence-01-8-frame-3.jpg",
+            "alt": "Sequence 01 8 frame 3",
+            "label": "FRAME 03"
+          }
+        ],
+        "playbackUrl": "https://youtu.be/fxrBRS0X2AA"
+      },
+      "links": []
+    },
+    {
+      "slug": "sequence-01-6",
+      "order": 6,
+      "status": "published",
+      "featured": false,
+      "featuredOrder": 99,
+      "category": "long",
+      "title": "Sequence 01 6",
+      "client": "",
+      "year": "2026",
+      "runtime": "00:41",
+      "role": "Long-Form Video Editing",
+      "format": "16:9 / LONG-FORM",
+      "description": "Long-form video edit focused on pacing, editorial timing, and controlled visual transitions.",
+      "challenge": "Maintain clarity and momentum across a longer edit while keeping the visual treatment consistent.",
+      "approach": "Focused on pacing, clean editorial timing, readable visual structure, and controlled transitions.",
+      "result": "A complete long-form portfolio piece presented in its original 16:9 composition.",
+      "tools": [
+        "Premiere Pro",
+        "After Effects"
+      ],
+      "services": [
+        "Long-Form Editing",
+        "Pacing",
+        "Post-Production"
+      ],
+      "media": {
+        "hero": "/media/work-posters/sequence-01-6.webp",
+        "previewVideo": "/media/long-form/sequence-01-6.mp4",
+        "hoverVideo": "/media/long-form/sequence-01-6-hover.mp4",
+        "frames": [
+          {
+            "src": "/media/long-form/sequence-01-6-frame-1.jpg",
+            "alt": "Sequence 01 6 frame 1",
+            "label": "FRAME 01"
+          },
+          {
+            "src": "/media/long-form/sequence-01-6-frame-2.jpg",
+            "alt": "Sequence 01 6 frame 2",
+            "label": "FRAME 02"
+          },
+          {
+            "src": "/media/long-form/sequence-01-6-frame-3.jpg",
+            "alt": "Sequence 01 6 frame 3",
+            "label": "FRAME 03"
+          }
+        ],
+        "playbackUrl": "https://youtu.be/eknItgc1JME"
+      },
+      "links": []
+    },
+    {
+      "slug": "rage-baiting-prank",
+      "order": 7,
+      "status": "published",
+      "featured": true,
+      "featuredOrder": 2,
+      "category": "short",
+      "title": "Rage Baiting Prank",
+      "client": "",
+      "year": "2026",
+      "runtime": "01:04",
+      "role": "Short-Form Video Editing",
+      "format": "SHORT-FORM / SOCIAL",
+      "description": "Short-form video edit focused on fast pacing, clear visual emphasis, and a clean mobile-first presentation.",
+      "challenge": "Deliver a compact social edit with clear pacing and readable visual hierarchy.",
+      "approach": "Focused on timing, clean presentation, and preserving the supplied vertical composition.",
+      "result": "A polished 9:16 portfolio piece prepared for browser playback and social viewing.",
+      "tools": [
+        "Premiere Pro",
+        "After Effects"
+      ],
+      "services": [
+        "Short-Form Editing",
+        "Pacing",
+        "Motion / Captions"
+      ],
+      "media": {
+        "hero": "/media/work-posters/rage-baiting-prank.webp",
+        "previewVideo": "/media/short-form/rage-baiting-prank.mp4",
+        "frames": [
+          {
+            "src": "/media/short-form/rage-baiting-prank-frame-1.jpg",
+            "alt": "Rage Baiting Prank frame 1",
+            "label": "FRAME 01"
+          },
+          {
+            "src": "/media/short-form/rage-baiting-prank-frame-2.jpg",
+            "alt": "Rage Baiting Prank frame 2",
+            "label": "FRAME 02"
+          },
+          {
+            "src": "/media/short-form/rage-baiting-prank-frame-3.jpg",
+            "alt": "Rage Baiting Prank frame 3",
+            "label": "FRAME 03"
+          }
+        ],
+        "playbackUrl": "https://youtube.com/shorts/1BSwXKgmNoc?feature=share",
+        "hoverVideo": "/media/hero-loops/rage-baiting-prank.mp4"
+      },
+      "links": []
+    },
+    {
+      "slug": "sequence-01",
+      "order": 8,
+      "status": "published",
+      "featured": false,
+      "featuredOrder": 99,
+      "category": "short",
+      "title": "Sequence 01",
+      "client": "",
+      "year": "2026",
+      "runtime": "00:52",
+      "role": "Short-Form Video Editing",
+      "format": "SHORT-FORM / SOCIAL",
+      "description": "Short-form video edit focused on fast pacing, clear visual emphasis, and a clean mobile-first presentation.",
+      "challenge": "Deliver a compact social edit with clear pacing and readable visual hierarchy.",
+      "approach": "Focused on timing, clean presentation, and preserving the supplied vertical composition.",
+      "result": "A polished 9:16 portfolio piece prepared for browser playback and social viewing.",
+      "tools": [
+        "Premiere Pro",
+        "After Effects"
+      ],
+      "services": [
+        "Short-Form Editing",
+        "Pacing",
+        "Motion / Captions"
+      ],
+      "media": {
+        "hero": "/media/work-posters/sequence-01.webp",
+        "previewVideo": "/media/short-form/sequence-01.mp4",
+        "frames": [
+          {
+            "src": "/media/short-form/sequence-01-frame-1.jpg",
+            "alt": "Sequence 01 frame 1",
+            "label": "FRAME 01"
+          },
+          {
+            "src": "/media/short-form/sequence-01-frame-2.jpg",
+            "alt": "Sequence 01 frame 2",
+            "label": "FRAME 02"
+          },
+          {
+            "src": "/media/short-form/sequence-01-frame-3.jpg",
+            "alt": "Sequence 01 frame 3",
+            "label": "FRAME 03"
+          }
+        ],
+        "playbackUrl": "https://youtube.com/shorts/pL5WF0qYM3I?feature=share",
+        "hoverVideo": "/media/hero-loops/sequence-01.mp4"
+      },
+      "links": []
+    },
+    {
+      "slug": "sequence-01-4",
+      "order": 9,
+      "status": "published",
+      "featured": false,
+      "featuredOrder": 99,
+      "category": "short",
+      "title": "Sequence 01 4",
+      "client": "",
+      "year": "2026",
+      "runtime": "00:50",
+      "role": "Short-Form Video Editing",
+      "format": "SHORT-FORM / SOCIAL",
+      "description": "Short-form video edit focused on fast pacing, clear visual emphasis, and a clean mobile-first presentation.",
+      "challenge": "Deliver a compact social edit with clear pacing and readable visual hierarchy.",
+      "approach": "Focused on timing, clean presentation, and preserving the supplied vertical composition.",
+      "result": "A polished 9:16 portfolio piece prepared for browser playback and social viewing.",
+      "tools": [
+        "Premiere Pro",
+        "After Effects"
+      ],
+      "services": [
+        "Short-Form Editing",
+        "Pacing",
+        "Motion / Captions"
+      ],
+      "media": {
+        "hero": "/media/work-posters/sequence-01-4.webp",
+        "previewVideo": "/media/short-form/sequence-01-4.mp4",
+        "frames": [
+          {
+            "src": "/media/short-form/sequence-01-4-frame-1.jpg",
+            "alt": "Sequence 01 4 frame 1",
+            "label": "FRAME 01"
+          },
+          {
+            "src": "/media/short-form/sequence-01-4-frame-2.jpg",
+            "alt": "Sequence 01 4 frame 2",
+            "label": "FRAME 02"
+          },
+          {
+            "src": "/media/short-form/sequence-01-4-frame-3.jpg",
+            "alt": "Sequence 01 4 frame 3",
+            "label": "FRAME 03"
+          }
+        ],
+        "playbackUrl": "https://youtube.com/shorts/BDAHpteswqg?feature=share",
+        "hoverVideo": "/media/hero-loops/sequence-01-4.mp4"
+      },
+      "links": []
+    },
+    {
+      "slug": "sequence-01-3",
+      "order": 10,
+      "status": "published",
+      "featured": false,
+      "featuredOrder": 99,
+      "category": "short",
+      "title": "Sequence 01 3",
+      "client": "",
+      "year": "2026",
+      "runtime": "00:13",
+      "role": "Short-Form Video Editing",
+      "format": "SHORT-FORM / SOCIAL",
+      "description": "Short-form video edit focused on fast pacing, clear visual emphasis, and a clean mobile-first presentation.",
+      "challenge": "Deliver a compact social edit with clear pacing and readable visual hierarchy.",
+      "approach": "Focused on timing, clean presentation, and preserving the supplied vertical composition.",
+      "result": "A polished 9:16 portfolio piece prepared for browser playback and social viewing.",
+      "tools": [
+        "Premiere Pro",
+        "After Effects"
+      ],
+      "services": [
+        "Short-Form Editing",
+        "Pacing",
+        "Motion / Captions"
+      ],
+      "media": {
+        "hero": "/media/work-posters/sequence-01-3.webp",
+        "previewVideo": "/media/short-form/sequence-01-3.mp4",
+        "frames": [
+          {
+            "src": "/media/short-form/sequence-01-3-frame-1.jpg",
+            "alt": "Sequence 01 3 frame 1",
+            "label": "FRAME 01"
+          },
+          {
+            "src": "/media/short-form/sequence-01-3-frame-2.jpg",
+            "alt": "Sequence 01 3 frame 2",
+            "label": "FRAME 02"
+          },
+          {
+            "src": "/media/short-form/sequence-01-3-frame-3.jpg",
+            "alt": "Sequence 01 3 frame 3",
+            "label": "FRAME 03"
+          }
+        ],
+        "playbackUrl": "https://youtube.com/shorts/1D2_vKhGYaY?feature=share",
+        "hoverVideo": "/media/hero-loops/sequence-01-3.mp4"
+      },
+      "links": []
+    },
+    {
+      "slug": "sequence-01-2",
+      "order": 11,
+      "status": "published",
+      "featured": false,
+      "featuredOrder": 99,
+      "category": "short",
+      "title": "Sequence 01 2",
+      "client": "",
+      "year": "2026",
+      "runtime": "02:11",
+      "role": "Short-Form Video Editing",
+      "format": "SHORT-FORM / SOCIAL",
+      "description": "Short-form video edit focused on fast pacing, clear visual emphasis, and a clean mobile-first presentation.",
+      "challenge": "Deliver a compact social edit with clear pacing and readable visual hierarchy.",
+      "approach": "Focused on timing, clean presentation, and preserving the supplied vertical composition.",
+      "result": "A polished 9:16 portfolio piece prepared for browser playback and social viewing.",
+      "tools": [
+        "Premiere Pro",
+        "After Effects"
+      ],
+      "services": [
+        "Short-Form Editing",
+        "Pacing",
+        "Motion / Captions"
+      ],
+      "media": {
+        "hero": "/media/work-posters/sequence-01-2.webp",
+        "previewVideo": "/media/short-form/sequence-01-2.mp4",
+        "frames": [
+          {
+            "src": "/media/short-form/sequence-01-2-frame-1.jpg",
+            "alt": "Sequence 01 2 frame 1",
+            "label": "FRAME 01"
+          },
+          {
+            "src": "/media/short-form/sequence-01-2-frame-2.jpg",
+            "alt": "Sequence 01 2 frame 2",
+            "label": "FRAME 02"
+          },
+          {
+            "src": "/media/short-form/sequence-01-2-frame-3.jpg",
+            "alt": "Sequence 01 2 frame 3",
+            "label": "FRAME 03"
+          }
+        ],
+        "playbackUrl": "https://youtube.com/shorts/taOJ1XudRvg?feature=share",
+        "hoverVideo": "/media/hero-loops/sequence-01-2.mp4"
+      },
+      "links": []
+    },
+    {
+      "slug": "sequence-01-1",
+      "order": 12,
+      "status": "published",
+      "featured": false,
+      "featuredOrder": 99,
+      "category": "short",
+      "title": "Sequence 01 1",
+      "client": "",
+      "year": "2026",
+      "runtime": "00:16",
+      "role": "Short-Form Video Editing",
+      "format": "SHORT-FORM / SOCIAL",
+      "description": "Short-form video edit focused on fast pacing, clear visual emphasis, and a clean mobile-first presentation.",
+      "challenge": "Deliver a compact social edit with clear pacing and readable visual hierarchy.",
+      "approach": "Focused on timing, clean presentation, and preserving the supplied vertical composition.",
+      "result": "A polished 9:16 portfolio piece prepared for browser playback and social viewing.",
+      "tools": [
+        "Premiere Pro",
+        "After Effects"
+      ],
+      "services": [
+        "Short-Form Editing",
+        "Pacing",
+        "Motion / Captions"
+      ],
+      "media": {
+        "hero": "/media/work-posters/sequence-01-1.webp",
+        "previewVideo": "/media/short-form/sequence-01-1.mp4",
+        "frames": [
+          {
+            "src": "/media/short-form/sequence-01-1-frame-1.jpg",
+            "alt": "Sequence 01 1 frame 1",
+            "label": "FRAME 01"
+          },
+          {
+            "src": "/media/short-form/sequence-01-1-frame-2.jpg",
+            "alt": "Sequence 01 1 frame 2",
+            "label": "FRAME 02"
+          },
+          {
+            "src": "/media/short-form/sequence-01-1-frame-3.jpg",
+            "alt": "Sequence 01 1 frame 3",
+            "label": "FRAME 03"
+          }
+        ],
+        "playbackUrl": "https://youtube.com/shorts/SqXT25AlAtM?feature=share",
+        "hoverVideo": "/media/hero-loops/sequence-01-1.mp4"
+      },
+      "links": []
+    },
+    {
+      "slug": "cut-and-hire",
+      "order": 13,
+      "status": "published",
+      "featured": true,
+      "featuredOrder": 3,
+      "category": "web",
+      "title": "Cut & Hire",
+      "client": "Cut & Hire",
+      "year": "2026",
+      "role": "Web Design / Development",
+      "format": "RESPONSIVE / WEB",
+      "description": "A creator-services website presenting editing, clipping, thumbnail work, reviews, service packages, and clear ways to start a project.",
+      "challenge": "Organize a large creative-service offer without burying the work, proof, or contact path under too much information.",
+      "approach": "Built the experience around a strong hero, portfolio categories, creator proof, service packages, and repeated project-start actions while keeping the visual system dark and focused.",
+      "result": "A full creative-team website where visitors can quickly understand the offer, inspect work and reviews, compare service options, and move into contact.",
+      "tools": [
+        "HTML",
+        "CSS",
+        "JavaScript",
+        "Responsive Design"
+      ],
+      "services": [
+        "Web Design",
+        "Frontend Development",
+        "Content Architecture",
+        "Responsive Design"
+      ],
+      "media": {
+        "hero": "/media/web-real/cutandhire-optimized.webp",
+        "frames": [
+          {
+            "src": "/media/web-real/cutandhire-frame-1.svg",
+            "alt": "Cut & Hire services presentation",
+            "label": "SERVICES"
+          },
+          {
+            "src": "/media/web-real/cutandhire-frame-2.svg",
+            "alt": "Cut & Hire creator reviews presentation",
+            "label": "REVIEWS"
+          },
+          {
+            "src": "/media/web-real/cutandhire-frame-3.svg",
+            "alt": "Cut & Hire contact call to action",
+            "label": "CONTACT"
+          }
+        ]
+      },
+      "website": {
+        "liveUrl": "https://cutandhire.com/"
+      },
+      "links": [
+        {
+          "label": "VISIT LIVE SITE",
+          "url": "https://cutandhire.com/"
+        }
+      ]
+    },
+    {
+      "slug": "fabri-edits",
+      "order": 14,
+      "status": "published",
+      "featured": false,
+      "featuredOrder": 99,
+      "category": "web",
+      "title": "Fabri Edits",
+      "client": "Fabri",
+      "year": "2026",
+      "role": "Web Design / Development",
+      "format": "RESPONSIVE / PORTFOLIO",
+      "description": "A focused video-editor portfolio that presents long-form and short-form work, creator credentials, pricing, reviews, and direct hiring options.",
+      "challenge": "Give video work enough space to sell the editing quality while keeping the page simple enough for a potential client to understand the offer quickly.",
+      "approach": "Structured the site around a direct editor-focused hero, separate long-form and short-form showcases, creator proof, custom-pricing information, reviews, and a clear hire section.",
+      "result": "A compact portfolio site that connects the editor’s work, experience, social proof, and contact path in one continuous experience.",
+      "tools": [
+        "HTML",
+        "CSS",
+        "JavaScript",
+        "Responsive Design"
+      ],
+      "services": [
+        "Web Design",
+        "Frontend Development",
+        "Portfolio Design",
+        "Responsive Design"
+      ],
+      "media": {
+        "hero": "/media/web-real/fabri-edits-optimized.webp",
+        "frames": [
+          {
+            "src": "/media/web-real/fabri-frame-1.svg",
+            "alt": "Fabri Edits long-form portfolio section",
+            "label": "LONG-FORM"
+          },
+          {
+            "src": "/media/web-real/fabri-frame-2.svg",
+            "alt": "Fabri Edits short-form portfolio section",
+            "label": "SHORT-FORM"
+          },
+          {
+            "src": "/media/web-real/fabri-frame-3.svg",
+            "alt": "Fabri Edits reviews and hire section",
+            "label": "REVIEWS / HIRE"
+          }
+        ]
+      },
+      "website": {
+        "liveUrl": "https://fabriedits.com/"
+      },
+      "links": [
+        {
+          "label": "VISIT LIVE SITE",
+          "url": "https://fabriedits.com/"
+        }
+      ]
+    },
+    {
+      "slug": "doorgo",
+      "order": 15,
+      "status": "published",
+      "featured": false,
+      "featuredOrder": 99,
+      "category": "web",
+      "title": "DoorGo",
+      "client": "DoorGo",
+      "year": "2026",
+      "role": "Web Design / Development",
+      "format": "RESPONSIVE / SERVICE SITE",
+      "description": "A Georgian 24/7 locksmith and access-service website for door opening, vehicle access, lock replacement, and related services.",
+      "challenge": "Make an urgent local service immediately understandable on mobile, where visitors often need a phone number, service type, coverage, and price context without searching.",
+      "approach": "Prioritized the 24/7 value proposition, phone action, core service categories, three-step process, coverage information, and repeated service/contact paths throughout the page.",
+      "result": "A direct service website that puts emergency actions and essential service information first while still giving visitors enough detail to choose the right service.",
+      "tools": [
+        "HTML",
+        "CSS",
+        "JavaScript",
+        "Responsive Design"
+      ],
+      "services": [
+        "Web Design",
+        "Frontend Development",
+        "Local Service UX",
+        "Responsive Design"
+      ],
+      "media": {
+        "hero": "/media/web-real/doorgo-optimized.webp",
+        "frames": [
+          {
+            "src": "/media/web-real/doorgo-frame-1.svg",
+            "alt": "DoorGo service selection presentation",
+            "label": "SERVICES"
+          },
+          {
+            "src": "/media/web-real/doorgo-frame-2.svg",
+            "alt": "DoorGo service process presentation",
+            "label": "PROCESS"
+          },
+          {
+            "src": "/media/web-real/doorgo-frame-3.svg",
+            "alt": "DoorGo 24/7 contact presentation",
+            "label": "CONTACT"
+          }
+        ]
+      },
+      "website": {
+        "liveUrl": "https://doorgo.ge/"
+      },
+      "links": [
+        {
+          "label": "VISIT LIVE SITE",
+          "url": "https://doorgo.ge/"
+        }
+      ]
+    }
+  ]
+}

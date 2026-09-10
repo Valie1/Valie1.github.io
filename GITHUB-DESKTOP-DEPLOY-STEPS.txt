@@ -1,0 +1,20 @@
+VALIE 122.96 — GITHUB DESKTOP DEPLOY
+
+1. Open GitHub Desktop.
+2. Open the repository that powers https://valie1.github.io/.
+3. Choose Repository > Show in Explorer.
+4. Do not delete the hidden .git folder.
+5. Remove the old website files from the repository folder.
+6. Copy every file and folder from this Pass 122.96 folder into the repository root.
+7. Make sure the hidden .github folder was copied too.
+8. Return to GitHub Desktop.
+9. Review the changed files.
+10. Commit with a message such as: Deploy new VALIE portfolio.
+11. Click Push origin.
+12. On GitHub.com open the repository > Settings > Pages.
+13. Set Build and deployment > Source to GitHub Actions.
+14. Open the Actions tab and wait for Deploy VALIE Portfolio to GitHub Pages to turn green.
+15. Open https://valie1.github.io/.
+16. Hard refresh once if the old site is still cached.
+
+After this setup, future portfolio updates only need Commit + Push. The included GitHub Actions workflow rebuilds and deploys the site automatically.

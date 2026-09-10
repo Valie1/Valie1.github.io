@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000">
+<rect width="100%" height="100%" fill="#070707"/>
+<text x="90" y="105" fill="#e02020" font-family="Arial" font-size="18" letter-spacing="4">CREATOR REVIEWS</text><text x="90" y="195" fill="#fff" font-family="Georgia" font-size="76" font-weight="700">What creators say.</text>
+<rect x="90" y="280" width="1420" height="470" rx="20" fill="#0a0a0a" stroke="#242424"/><circle cx="180" cy="370" r="44" fill="#202020"/><text x="250" y="355" fill="#fff" font-family="Arial" font-size="30" font-weight="700">Ricky Flicks</text><text x="250" y="395" fill="#777" font-family="Arial" font-size="20">1.5M followers</text><text x="150" y="515" fill="#d5d5d5" font-family="Georgia" font-style="italic" font-size="34">“Reliable editors who communicate well and</text><text x="150" y="560" fill="#d5d5d5" font-family="Georgia" font-style="italic" font-size="34">take feedback seriously.”</text><line x1="150" y1="640" x2="1440" y2="640" stroke="#222"/><text x="150" y="700" fill="#e02020" font-family="Arial" font-size="18" letter-spacing="3">VERIFIED REVIEW</text>
+</svg>

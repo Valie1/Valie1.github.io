@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000">
+<rect width="100%" height="100%" fill="#070707"/>
+<text x="90" y="100" fill="#e02020" font-family="Arial" font-size="18" letter-spacing="4">SERVICES</text>
+<text x="90" y="190" fill="#f5f0eb" font-family="Georgia" font-size="72" font-weight="700">Choose your editing setup.</text>
+<g font-family="Arial"><rect x="90" y="280" width="430" height="540" rx="16" fill="#0b0b0b" stroke="#242424"/><text x="130" y="345" fill="#777" font-size="16">FOR TIKTOK, REELS &amp; SHORTS</text><text x="130" y="405" fill="#fff" font-size="34" font-weight="700">Reels Pricing</text><text x="130" y="460" fill="#e02020" font-size="22">CUSTOM PRICING</text><rect x="130" y="700" width="170" height="48" rx="24" fill="#e02020"/><text x="164" y="731" fill="#fff" font-size="15" font-weight="700">START PROJECT</text>
+<rect x="560" y="280" width="430" height="540" rx="16" fill="#0b0b0b" stroke="#242424"/><text x="600" y="345" fill="#777" font-size="16">FOR BIGGER VIDEOS</text><text x="600" y="405" fill="#fff" font-size="34" font-weight="700">YouTube Pricing</text><text x="600" y="460" fill="#e02020" font-size="22">CUSTOM PRICING</text>
+<rect x="1030" y="280" width="430" height="540" rx="16" fill="#0b0b0b" stroke="#242424"/><text x="1070" y="345" fill="#777" font-size="16">FOR DAILY OUTPUT</text><text x="1070" y="405" fill="#fff" font-size="34" font-weight="700">Editing Team</text><text x="1070" y="460" fill="#e02020" font-size="22">CUSTOM PRICING</text></g>
+</svg>
