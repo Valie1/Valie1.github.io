@@ -2,7 +2,7 @@
 setlocal
 cd /d "%~dp0"
 echo.
-echo VALIE PASS 122.97 - GITHUB PAGES PREVIEW
+echo VALIE PASS 122.98 - GITHUB PAGES PREVIEW
 echo ===========================================
 echo.
 if not exist node_modules\next\package.json (
@@ -28,6 +28,6 @@ call npm run preview:pages
 goto :eof
 :fail
 echo.
-echo PASS 122.97 preview/build failed. Read the error above.
+echo PASS 122.98 preview/build failed. Read the error above.
 pause
 exit /b 1

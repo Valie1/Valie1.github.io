@@ -40,6 +40,9 @@ jobs:
       - name: Install dependencies
         run: npm install --no-audit --no-fund
 
+      - name: Audit static metadata routes
+        run: npm run metadata:static:audit
+
       - name: Type check
         run: npm run typecheck
 

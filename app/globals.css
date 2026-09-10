@@ -8035,7 +8035,7 @@ body{
 .site-loading-skeleton__footer-wordmark{width:min(360px,58vw);height:clamp(54px,8vw,100px);border-radius:3px}
 .site-loading-skeleton__footer-copy{width:min(500px,70vw);height:9px;margin-top:24px;border-radius:999px}
 .site-loading-skeleton__footer-copy.is-short{width:min(330px,48vw);margin-top:9px}
-.site-loading-skeleton__footer-bottom{display:flex;justify-content:space-between;gap:32px;align-items:end;padding-top:22px;border-top:1px solid rgba(255,255,255,.05)}
+.site-loading-skeleton__footer-bottom{display:flex;justify-content:space-between;gap:32px;align-items:flex-end;padding-top:22px;border-top:1px solid rgba(255,255,255,.05)}
 .site-loading-skeleton__footer-meta{width:220px;height:8px;border-radius:999px}
 .site-loading-skeleton__footer-links{display:flex;gap:18px}
 .site-loading-skeleton__footer-links>.valie-skeleton{width:72px;height:8px;border-radius:999px}

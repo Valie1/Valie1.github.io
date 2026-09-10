@@ -1,6 +1,6 @@
 {
   "name": "premium-creative-portfolio",
-  "version": "9.12.98",
+  "version": "9.12.99",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -9,7 +9,7 @@
     "typecheck": "tsc --noEmit",
     "content:check": "node scripts/validate-content.mjs",
     "seo:audit": "node scripts/seo-audit.mjs",
-    "launch:check": "npm run css:syntax-guard && npm run audit:structural && npm run desktop:polish:audit && npm run responsive:polish:audit && npm run final:release:audit && npm run publish:lock:audit && npm run performance:audit && npm run review:hydration:audit && npm run browser:qa && npm run routes:audit && npm run mobile:overflow:audit && npm run mobile:layout:audit && npm run mobile:interactions:audit && npm run mobile:visual:audit && npm run mobile:device:qa && npm run mobile-cta:audit && npm run seo:audit && npm run github-pages:audit && npm run cleanup:audit && npm run buttons:audit && npm run hero-cta:audit && npm run cookies:audit && npm run legal:return:audit && npm run overlay:no-jump:audit && npm run legal:no-jump:audit && npm run skeletons:audit && npm run accessibility:audit && npm run security:check && npm run typecheck && npm run build:pages",
+    "launch:check": "npm run css:syntax-guard && npm run audit:structural && npm run desktop:polish:audit && npm run responsive:polish:audit && npm run final:release:audit && npm run publish:lock:audit && npm run performance:audit && npm run review:hydration:audit && npm run browser:qa && npm run routes:audit && npm run mobile:overflow:audit && npm run mobile:layout:audit && npm run mobile:interactions:audit && npm run mobile:visual:audit && npm run mobile:device:qa && npm run mobile-cta:audit && npm run seo:audit && npm run github-pages:audit && npm run cleanup:audit && npm run buttons:audit && npm run hero-cta:audit && npm run cookies:audit && npm run legal:return:audit && npm run overlay:no-jump:audit && npm run legal:no-jump:audit && npm run skeletons:audit && npm run accessibility:audit && npm run security:check && npm run metadata:static:audit && npm run typecheck && npm run build:pages",
     "security:check": "node scripts/dependency-guard.mjs",
     "images:audit": "node scripts/image-budget.mjs",
     "media:audit": "node scripts/media-budget.mjs",
@@ -27,7 +27,7 @@
     "assets:audit": "node scripts/dead-asset-audit.mjs",
     "core-vitals:audit": "node scripts/core-web-vitals-readiness-audit.mjs",
     "deployment:audit": "node scripts/github-pages-audit.mjs",
-    "deploy:check": "npm run typecheck && npm run build:pages && npm run github-pages:audit",
+    "deploy:check": "npm run typecheck && npm run metadata:static:audit && npm run build:pages && npm run github-pages:audit",
     "build:production": "npm run build:pages",
     "css:syntax-guard": "node scripts/css-source-guard.mjs",
     "legal:return:audit": "node scripts/legal-return-audit.mjs",
@@ -51,7 +51,8 @@
     "preview:fresh": "node scripts/clean-next-cache.mjs && npm run build:pages && npm run preview:pages",
     "build:pages": "next build && node scripts/prepare-github-pages.mjs",
     "preview:pages": "node scripts/serve-static-export.mjs",
-    "github-pages:audit": "node scripts/github-pages-audit.mjs"
+    "github-pages:audit": "node scripts/github-pages-audit.mjs",
+    "metadata:static:audit": "node scripts/static-metadata-export-audit.mjs"
   },
   "dependencies": {
     "lucide-react": "0.468.0",
