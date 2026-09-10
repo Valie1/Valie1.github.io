@@ -1,6 +1,6 @@
 {
   "name": "premium-creative-portfolio",
-  "version": "9.12.97",
+  "version": "9.12.98",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -27,7 +27,7 @@
     "assets:audit": "node scripts/dead-asset-audit.mjs",
     "core-vitals:audit": "node scripts/core-web-vitals-readiness-audit.mjs",
     "deployment:audit": "node scripts/github-pages-audit.mjs",
-    "deploy:check": "npm run github-pages:audit && npm run launch:check",
+    "deploy:check": "npm run typecheck && npm run build:pages && npm run github-pages:audit",
     "build:production": "npm run build:pages",
     "css:syntax-guard": "node scripts/css-source-guard.mjs",
     "legal:return:audit": "node scripts/legal-return-audit.mjs",

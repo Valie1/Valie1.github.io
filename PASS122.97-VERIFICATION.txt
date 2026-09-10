@@ -1,0 +1,11 @@
+PASS 122.97 - GITHUB ACTIONS DEPLOY FIX
+
+Focused deployment changes:
+- GitHub Actions uses Node 24.
+- Updated checkout/setup-node/configure-pages/upload-pages-artifact actions to current Node-24-capable major versions.
+- Added actions: read permission required by deploy-pages v5.
+- Removed the brittle pre-build GitHub Pages heuristic gate.
+- The real next build/static export now runs before deployment verification.
+- github-pages:audit now verifies the actual generated out/ artifact and required routes.
+- Hidden Pages artifact files are explicitly included.
+- Site UI/content/interaction code is otherwise unchanged from Pass 122.96.
