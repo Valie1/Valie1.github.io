@@ -1,3418 +1,960 @@
-<!DOCTYPE html>  <html lang="en">  
-<head>  
-<meta charset="UTF-8" />  
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />  
-<title>VALIE</title>  
-<link rel="icon" type="image/png" href="Enkiduicon.png">  
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&display=swap" rel="stylesheet">  <style>  
-  html{scroll-behavior:smooth;}  
-  
-  body{  
-    margin:0;  
-    font-family:'Montserrat',sans-serif;  
-    color:#fff;  
-    text-align:center;  
-    background-image:  
-      linear-gradient(rgba(0,0,0,0.65),rgba(0,0,0,0.65)),  
-      url("Background.jpg");  
-    background-size:cover;  
-    background-position:center;  
-    background-repeat:no-repeat;  
-    background-attachment:fixed;  
-  }  
-  @supports (-webkit-touch-callout: none) {  
-    body { background-attachment: scroll; }  
-  }  
-  
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>VALIE — VIDEO EDITOR</title>
+<link rel="icon" type="image/png" href="Rovericon.png">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Bebas+Neue&family=Rajdhani:wght@400;600;700&family=Caveat:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
 :root{
-  --cursor-size: 56px;
-  --cursor-offset-x: 10px;
-  --cursor-offset-y: 10px;
-
-  /* Enkidu palette */
-  --p5-red: #00c97a;
-  --p5-red2: #7fffd4;
-
-  --enkidu-glow: rgba(0,201,122,0.45);
-  --enkidu-glow-soft: rgba(127,255,212,0.25);
-  --enkidu-dark: rgba(0,70,45,0.55);
+  --red:#C8001A;--red-dim:rgba(200,0,26,0.65);--denim:#1A2E4A;--amber:#D4621A;
+  --paper:#F0EAD6;--paper-dark:#D9CEB0;--ink:#1C1008;--ink-mid:#3A2A1A;
+  --ink-dim:rgba(28,16,8,0.50);--leather:#5C3A1E;
+  --font-stamp:'Bebas Neue',sans-serif;--font-type:'Special Elite',monospace;
+  --font-body:'Rajdhani',sans-serif;--font-hand:'Caveat',cursive;
 }
-  
-  /* Hide system cursor ONLY on non-touch devices */  
-  @media (hover:hover) and (pointer:fine){  
-    html, body { cursor: none !important; }  
-    a, button, input, textarea, select, label, [role="button"] { cursor: none !important; }  
-  }  
-  
-  .gif-cursor{  
-    position:fixed;  
-    left:0; top:0;  
-    width:var(--cursor-size);  
-    height:var(--cursor-size);  
-    transform: translate(-9999px, -9999px);  
-    pointer-events:none;  
-    z-index:2147483647;  
-    user-select:none;  
-    -webkit-user-drag:none;  
-    will-change: transform;  
-    display:none;  
-  }  
-  .gif-cursor img{  
-    width:100%;  
-    height:100%;  
-    display:block;  
-    user-select:none;  
-    pointer-events:none;  
-  }  
-  
-  /* ===== INTRO ===== */  
-  .intro{  
-    position:fixed;  
-    inset:0;  
-    z-index:99999;  
-    display:flex;  
-    align-items:center;  
-    justify-content:center;  
-    background:transparent;  
-    opacity:1;  
-    transition:opacity .55s ease;  
-    pointer-events:auto;  
-  }  
-  .intro.hide{ opacity:0; pointer-events:none; }  
-  
- #introVideo{
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  display:block;
+body{font-family:var(--font-body);color:var(--ink);background:var(--paper);overflow-x:hidden;min-height:100vh;}
+body::before{content:"";position:fixed;inset:0;z-index:9998;pointer-events:none;opacity:0.055;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:200px;}
 
-  pointer-events:none; /* ✅ makes Skip clickable on mobile */
-}
-  
-  .intro-skip{  
-    position:absolute;  
-    top:calc(16px + env(safe-area-inset-top));  
-    right:calc(16px + env(safe-area-inset-right));  
-    padding:12px 16px;  
-    border-radius:14px;  
-    border:1px solid rgba(255,255,255,0.18);  
-    background:rgba(0,0,0,0.55);  
-    color:#fff;  
-    font-weight:800;  
-    cursor:pointer;  
-    z-index:7;  
-    -webkit-tap-highlight-color: transparent;  
-    transition: opacity .22s ease, transform .22s ease;  
-  }  
-  .intro-skip:hover{  
-    border-color: rgba(0,201,122,0.55);  
-    box-shadow:0 0 20px rgba(0,201,122,0.25);  
-  }  
-  .intro-skip:active{ transform:scale(0.98); }  
-  .intro.outro .intro-skip{ opacity:0; pointer-events:none; }  
-  
-  /* Tap-to-enable-sound overlay */  
-  .tap-sound-overlay{  
-    position:fixed;  
-    inset:0;  
-    z-index:1;  
-    display:flex;  
-    align-items:flex-end;  
-    justify-content:center;  
-    padding-bottom:calc(22px + env(safe-area-inset-bottom));  
-    background:linear-gradient(to top, rgba(0,0,0,0.55), rgba(0,0,0,0));  
-    opacity:0;  
-    visibility:hidden;  
-    transform:translateY(10px);  
-    transition: opacity .55s ease, transform .55s ease, visibility 0s linear .55s;  
-    pointer-events:none;  
-  }  
-  .tap-sound-overlay.show{  
-    opacity:1;  
-    visibility:visible;  
-    transform:translateY(0);  
-    transition: opacity .55s ease, transform .55s ease, visibility 0s;  
-  }  
-  .tap-sound-overlay.hide{  
-    opacity:0;  
-    visibility:hidden;  
-    transform:translateY(10px);  
-    transition: opacity .55s ease, transform .55s ease, visibility 0s linear .55s;  
-  }  
-  .tap-sound-btn{  
-    pointer-events:auto;  
-    padding:14px 18px;  
-    border-radius:16px;  
-    background:rgba(0,0,0,0.65);  
-    border:1px solid rgba(255,255,255,0.16);  
-    color:#fff;  
-    font-weight:900;  
-    letter-spacing:.4px;  
-    cursor:pointer;  
-    -webkit-tap-highlight-color: transparent;  
-    box-shadow:0 0 30px rgba(0,201,122,0.18);  
-  }  
-  .tap-sound-btn:hover{  
-    border-color: rgba(0,201,122,0.55);  
-    box-shadow:0 0 28px rgba(0,201,122,0.28);  
-  }  
-  .tap-sound-btn:active{ transform:scale(0.99); }  
-  
-  /* Persona 5 style outro */  
-  .intro-outro{  
-    position:absolute;  
-    inset:0;  
-    pointer-events:none;  
-    opacity:0;  
-    z-index:6;  
-  }  
-  .intro.outro .intro-outro{  
-    opacity:1;  
-    animation:p5Outro 820ms ease forwards;  
-  }  
-  .intro-outro::before{  
-    content:"";  
-    position:absolute;  
-    inset:-20%;  
-    background:  
-      radial-gradient(circle at 35% 55%, rgba(0,201,122,0.65), rgba(0,0,0,0) 55%),  
-      linear-gradient(135deg, rgba(0,201,122,0.15), rgba(0,0,0,0) 60%);  
-    mix-blend-mode:screen;  
-    opacity:0;  
-    animation:p5Flash 820ms ease forwards;  
-  }  
-  .intro-outro::after{  
-    content:"";  
-    position:absolute;  
-    inset:-30%;  
-    background: linear-gradient(115deg,  
-      rgba(255,255,255,0) 0%,  
-      rgba(255,255,255,0) 45%,  
-      rgba(255,255,255,0.95) 50%,  
-      rgba(255,255,255,0) 56%,  
-      rgba(255,255,255,0) 100%);  
-    transform:translateX(-70%) rotate(-8deg);  
-    opacity:0.85;  
-    filter: blur(0.2px);  
-    animation:p5Slash 820ms cubic-bezier(.2,.9,.2,1) forwards;  
-  }  
-  @keyframes p5Flash{  
-    0%{ opacity:0; transform:scale(1); }  
-    18%{ opacity:1; transform:scale(1.02); }  
-    55%{ opacity:0.15; transform:scale(1.05); }  
-    100%{ opacity:0; transform:scale(1.08); }  
-  }  
-  @keyframes p5Slash{  
-    0%{ transform:translateX(-75%) rotate(-10deg); }  
-    40%{ transform:translateX(15%) rotate(-8deg); }  
-    100%{ transform:translateX(85%) rotate(-6deg); }  
-  }  
-  @keyframes p5Outro{  
-    0%{ opacity:0; }  
-    10%{ opacity:1; }  
-    70%{ opacity:1; }  
-    100%{ opacity:0; }  
-  }  
-  
-  /* HERO */  
-  .hero{  
-    position:relative;  
-    min-height:100svh;  
-    min-height:100dvh;  
-    display:flex;  
-    flex-direction:column;  
-    justify-content:center;  
-    align-items:center;  
-    padding:20px;  
-    overflow:hidden;  
-  }  
-  .title{  
-    font-size:clamp(50px,7vw,110px);  
-    font-weight:800;  
-    letter-spacing:6px;  
-    margin:0;  
-    text-transform:uppercase;  
-    text-shadow:0 15px 40px rgba(0,0,0,0.8);  
-    z-index:2;  
-  }  
-  .subtitle{  
-    margin-top:20px;  
-    font-size:20px;  
-    color:rgba(255,255,255,0.85);  
-    max-width:900px;  
-    z-index:2;  
-  }  
-  .button{  
-    margin-top:40px;  
-    padding:16px 45px;  
-    background:var(--p5-red);  
-    color:#fff;  
-    text-decoration:none;  
-    border-radius:12px;  
-    font-weight:700;  
-    transition:0.3s ease;  
-    box-shadow:0 0 30px rgba(0,201,122,0.5);  
-    display:inline-block;  
-    z-index:2;  
-  }  
-  .button:hover{  
-    transform:scale(1.07);  
-    box-shadow:0 0 45px rgba(0,201,122,0.8);  
-    background:var(--p5-red2);  
-  }  
-  
-  .character{  
-    position:absolute;  
-    bottom:0;  
-    max-height:95vh;  
-    z-index:1;  
-    pointer-events:none;  
-  }  
-  .enkidu-left{
-  left:-60px;
-  transform: rotate(-4deg);
-  filter:
-    drop-shadow(0 0 30px rgba(0,201,122,0.6))
-    drop-shadow(0 0 70px rgba(0,201,122,0.3));
+/* ══════════════════ NAV ══════════════════ */
+.nav{position:fixed;top:0;left:0;right:0;z-index:600;height:54px;background:var(--denim);
+  border-bottom:3px solid var(--red);display:flex;align-items:center;justify-content:space-between;
+  padding:0 clamp(16px,4vw,56px);}
+.nav::after{content:"";position:absolute;bottom:-7px;left:0;right:0;height:2px;background:var(--amber);opacity:0.35;}
+.nav-logo{font-family:var(--font-stamp);font-size:26px;letter-spacing:6px;color:#fff;text-decoration:none;
+  text-shadow:0 0 18px rgba(200,0,26,0.50);flex-shrink:0;}
+.nav-logo span{color:var(--red)}
+
+/* Desktop links */
+.nav-links{display:flex;gap:28px;list-style:none}
+.nav-links a{font-family:var(--font-type);font-size:12px;letter-spacing:2px;
+  color:rgba(255,255,255,0.50);text-decoration:none;text-transform:uppercase;
+  transition:color .2s;position:relative;padding-bottom:2px;}
+.nav-links a::after{content:"";position:absolute;bottom:0;left:0;width:0;height:1px;
+  background:var(--red);transition:width .25s ease;}
+.nav-links a:hover,.nav-links a.active{color:#fff;}
+.nav-links a.active::after,.nav-links a:hover::after{width:100%;}
+
+/* Hamburger button — desktop hidden */
+.nav-burger{display:none;flex-direction:column;gap:5px;background:none;border:none;
+  cursor:pointer;padding:6px;z-index:702;}
+.nav-burger span{display:block;width:22px;height:2px;background:#fff;
+  transition:transform .3s ease,opacity .3s ease,background .2s;}
+.nav-burger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.nav-burger.open span:nth-child(2){opacity:0}
+.nav-burger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+/* Mobile drawer */
+.nav-drawer{
+  display:none;position:fixed;top:54px;left:0;right:0;z-index:599;
+  background:rgba(15,25,42,0.98);border-bottom:2px solid var(--red);
+  padding:0;max-height:0;overflow:hidden;
+  transition:max-height .35s cubic-bezier(.4,0,.2,1),padding .35s ease;}
+.nav-drawer.open{max-height:280px;padding:16px 0 20px;}
+.nav-drawer ul{list-style:none;display:flex;flex-direction:column;}
+.nav-drawer a{display:block;padding:13px clamp(20px,5vw,40px);
+  font-family:var(--font-type);font-size:13px;letter-spacing:3px;text-transform:uppercase;
+  color:rgba(255,255,255,0.60);text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.06);
+  transition:color .2s,background .2s;}
+.nav-drawer a:hover,.nav-drawer a.active{color:#fff;background:rgba(200,0,26,0.10);}
+.nav-drawer a.active{border-left:3px solid var(--red);}
+
+@media(max-width:640px){
+  .nav-links{display:none}
+  .nav-burger{display:flex}
+  .nav-drawer{display:block}
 }
 
-.enkidu-right{
-  right:-40px;
-  transform: rotate(4deg);
-  filter:
-    drop-shadow(0 0 30px rgba(0,201,122,0.6))
-    drop-shadow(0 0 70px rgba(0,201,122,0.3));
-}
-  
-  /* PORTFOLIO */  
-  .portfolio{  
-    padding:110px 20px 80px;  
-    background:rgba(0,0,0,0.90);  
-  }  
-  .section-title{  
-    font-size:clamp(32px,4vw,56px);  
-    font-weight:800;  
-    margin-bottom:40px;  
-  }  
-  .video-grid{  
-    max-width:2800px;  
-    margin:0 auto;  
-    display:grid;  
-    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));  
-    gap:56px;  
-  }  
-  .video-card{  
-    border-radius:18px;  
-    overflow:hidden;  
-    background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(0,0,0,0.55));  
-    border: 1px solid rgba(255,255,255,0.10);  
-    box-shadow: 0 18px 50px rgba(0,0,0,0.65);  
-    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;  
-    position:relative;  
-  }  
-  .video-card:hover{  
-    transform: translateY(-8px);  
-    border-color: rgba(0,201,122,0.35);  
-    box-shadow: 0 24px 70px rgba(0,0,0,0.75);  
-  }  
-  
-  /* ===== Persona 5 Custom Player ===== */  
-  .p5-player{ position:relative; width:100%; background:#000; display:flex; flex-direction:column; min-height:0; }  
-  .p5-video{ width:100%; flex:1; height:100%; object-fit:contain; display:block; background:#000; }  
-  
-  @media (hover:hover) and (pointer:fine){  
-    .p5-player, .p5-player *{ cursor: none !important; }  
-    .p5-player:fullscreen, .p5-player:fullscreen *{ cursor: none !important; }  
-    .p5-player:-webkit-full-screen, .p5-player:-webkit-full-screen *{ cursor: none !important; }  
-  }  
-  .p5-player, .p5-video { cursor: crosshair; }  
-  
-  .p5-player:fullscreen,  
-  .p5-player:-webkit-full-screen{  
-    width:100vw !important;  
-    height:100vh !important;  
-    background:#000 !important;  
-    border-radius:0 !important;  
-  }  
-  .p5-player:fullscreen .p5-video,  
-  .p5-player:-webkit-full-screen .p5-video{  
-    width:100% !important;  
-    height:100% !important;  
-    object-fit:contain !important;  
-    background:#000 !important;  
-  }  
-  .p5-player:fullscreen .p5-controls,  
-  .p5-player:-webkit-full-screen .p5-controls{ left:16px; right:16px; bottom:14px; }  
-  
-  .p5-gestures{ position:absolute; inset:0; display:flex; z-index:4; pointer-events:auto; }  
-  .p5-zone{ flex:1; background:transparent; border:none; padding:0; margin:0; cursor:pointer; -webkit-tap-highlight-color: transparent; }  
-  
-  .p5-hint{  
-    position:absolute;  
-    left:50%;  
-    top:50%;  
-    transform:translate(-50%,-50%);  
-    padding:10px 14px;  
-    border-radius:14px;  
-    background:rgba(0,0,0,0.55);  
-    border:1px solid rgba(255,255,255,0.14);  
-    font-weight:800;  
-    font-size:14px;  
-    letter-spacing:0.6px;  
-    opacity:0;  
-    pointer-events:none;  
-    transition: opacity .15s ease, transform .15s ease;  
-    z-index:5;  
-  }  
-  .p5-hint.show{ opacity:1; transform:translate(-50%,-55%); }  
-  
-  .p5-bigplay{  
-    position:absolute;  
-    inset:0;  
-    margin:auto;  
-    width:86px;  
-    height:86px;  
-    border-radius:18px;  
-    border:2px solid rgba(255,255,255,0.25);  
-    background:rgba(0,0,0,0.45);  
-    cursor:pointer;  
-    display:grid;  
-    place-items:center;  
-    box-shadow:0 0 40px rgba(0,201,122,0.35);  
-    transition:0.2s ease;  
-    z-index:6;  
-  }  
-  .p5-bigplay:hover{ transform:scale(1.05); }  
-  .p5-bigplay img{ width:34px; height:34px; display:block; }  
-  
-  .p5-controls{  
-    position:absolute;  
-    left:12px;  
-    right:12px;  
-    bottom:10px;  
-    display:flex;  
-    align-items:center;  
-    gap:10px;  
-    padding:10px 12px;  
-    background:linear-gradient(to top, rgba(0,0,0,0.88), rgba(0,0,0,0.20));  
-    z-index:7;  
-    box-sizing:border-box;  
-    max-width:100%;  
-  }  
-  .p5-btn{  
-    background:#0b0b0b;  
-    border:1px solid rgba(255,255,255,0.12);  
-    color:#fff;  
-    border-radius:10px;  
-    padding:8px 10px;  
-    cursor:pointer;  
-    font-weight:700;  
-    display:grid;  
-    place-items:center;  
-    user-select:none;  
-    transition: transform .15s ease, box-shadow .2s ease, border-color .2s ease;  
-  }  
-  .p5-btn:hover{  
-    border-color: rgba(0,201,122,0.55);  
-    box-shadow:0 0 22px rgba(0,201,122,0.25);  
-    transform: translateY(-1px);  
-  }  
-  .p5-btn:active{ transform: translateY(0px) scale(0.98); }  
-  .p5-icon{ width:18px; height:18px; display:block; }  
-
-  /* =========================================
-   FORCE PLAYER ICONS WHITE (EXCEPT PLAY/PAUSE)
-   ========================================= */
-
-/* Target ALL player icons */
-.p5-icon,
-.p5-ico,
-.p5-bigplay img,
-.p5-playhero img{
-
-  /* make dark pngs white */
-  filter: brightness(0) invert(1);
-
+/* ══════════════════ HERO ══════════════════ */
+.hero{min-height:100svh;background:var(--denim);display:grid;grid-template-columns:1fr 1fr;
+  align-items:center;position:relative;overflow:hidden;padding-top:54px;}
+.hero::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(-45deg,transparent,transparent 3px,rgba(255,255,255,0.011) 3px,rgba(255,255,255,0.011) 6px);}
+.hero-left{padding:clamp(40px,7vw,90px) clamp(24px,5vw,72px);position:relative;z-index:2;}
+.hero-tag{display:inline-block;font-family:var(--font-type);font-size:11px;letter-spacing:3px;
+  text-transform:uppercase;color:var(--red);border:1px solid rgba(200,0,26,0.50);padding:4px 10px;
+  margin-bottom:22px;position:relative;opacity:0;animation:fadeSlideUp .7s ease .2s forwards;}
+.hero-tag::before{content:"";position:absolute;left:-8px;top:50%;transform:translateY(-50%);
+  width:6px;height:2px;background:var(--red);}
+.hero-name{font-family:var(--font-stamp);font-size:clamp(72px,11vw,152px);letter-spacing:4px;
+  line-height:0.90;color:#fff;opacity:0;
+  animation:nameReveal .9s cubic-bezier(.2,.8,.2,1) .4s forwards,nameFlicker 8s ease-in-out 1.5s infinite;}
+@keyframes nameReveal{from{opacity:0;transform:translateY(30px) skewX(-4deg)}to{opacity:1;transform:none}}
+@keyframes nameFlicker{
+  0%,89%,100%{text-shadow:4px 4px 0 rgba(0,0,0,0.35),0 0 35px rgba(200,0,26,0.12)}
+  90%{text-shadow:4px 4px 0 rgba(0,0,0,0.35),0 0 75px rgba(200,0,26,0.55),2px 0 var(--red),-2px 0 rgba(200,100,0,0.45)}
+  91%{text-shadow:4px 4px 0 rgba(0,0,0,0.35),0 0 35px rgba(200,0,26,0.12)}}
+.hero-name-wrap{position:relative;display:inline-block}
+.hero-name-wrap::after{content:"";position:absolute;left:0;bottom:-8px;width:0;height:4px;
+  background:var(--red);box-shadow:0 2px 12px rgba(200,0,26,0.55);animation:lineGrow .8s ease 1s forwards;}
+@keyframes lineGrow{from{width:0}to{width:65%}}
+.hero-sub{margin-top:28px;font-family:var(--font-hand);font-size:clamp(16px,2vw,21px);
+  color:rgba(255,255,255,0.52);letter-spacing:.4px;line-height:1.55;max-width:360px;
+  opacity:0;animation:fadeSlideUp .7s ease .75s forwards;}
+.hero-sub em{color:rgba(212,98,26,0.90);font-style:normal}
+.hero-btns{display:flex;gap:12px;margin-top:36px;flex-wrap:wrap;
+  opacity:0;animation:fadeSlideUp .7s ease .95s forwards;}
+@keyframes fadeSlideUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.btn-red{display:inline-flex;align-items:center;gap:8px;padding:13px 26px;background:var(--red);
+  color:#fff;text-decoration:none;font-family:var(--font-type);font-size:11px;letter-spacing:3px;
+  text-transform:uppercase;border:none;position:relative;overflow:hidden;
+  clip-path:polygon(6px 0%,100% 0%,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px);
+  transition:transform .18s,box-shadow .18s,background .18s;}
+.btn-red::after{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.12),transparent 55%)}
+.btn-red:hover{transform:translateY(-2px);background:#e0001d;box-shadow:0 0 24px rgba(200,0,26,0.55)}
+.btn-outline{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;
+  background:transparent;color:rgba(255,255,255,0.62);text-decoration:none;
+  font-family:var(--font-type);font-size:11px;letter-spacing:3px;text-transform:uppercase;
+  border:1px solid rgba(255,255,255,0.26);
+  clip-path:polygon(6px 0%,100% 0%,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px);
+  transition:transform .18s,border-color .18s,color .18s;}
+.btn-outline:hover{transform:translateY(-2px);border-color:rgba(200,0,26,0.65);color:rgba(200,0,26,0.88)}
+.hero-right{position:relative;height:100%;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.hero-right::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:linear-gradient(to bottom,transparent,var(--red),transparent);opacity:0.50;z-index:1;}
+.hero-visual{position:relative;z-index:2;width:100%;height:100%;
+  display:flex;align-items:center;justify-content:center;padding:40px 32px;
+  opacity:0;animation:fadeSlideUp .9s ease .5s forwards;}
+.hero-reel{position:relative;width:clamp(260px,36vw,440px);aspect-ratio:1;}
+.reel-glow{position:absolute;inset:-8%;border-radius:50%;
+  background:radial-gradient(circle,rgba(200,0,26,0.10) 0%,rgba(200,0,26,0.03) 55%,transparent 75%);pointer-events:none;}
+.reel-body{position:absolute;inset:0;border-radius:50%;animation:reelSpin 12s linear infinite;}
+.reel-body::before{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid rgba(200,0,26,0.55);}
+.reel-body::after{content:"";position:absolute;inset:14%;border-radius:50%;border:1.5px solid rgba(200,0,26,0.35);}
+.reel-inner{position:absolute;inset:22%;border-radius:50%;border:1px solid rgba(200,0,26,0.22);animation:reelSpin 8s linear infinite reverse;}
+@keyframes reelSpin{to{transform:rotate(360deg)}}
+.reel-hub{position:absolute;inset:50%;transform:translate(-50%,-50%);width:32%;height:32%;border-radius:50%;
+  background:radial-gradient(circle at 35% 35%,rgba(255,255,255,0.08),rgba(200,0,26,0.18) 40%,rgba(26,46,74,0.80) 100%);
+  border:2px solid rgba(200,0,26,0.65);box-shadow:0 0 28px rgba(200,0,26,0.35),inset 0 0 16px rgba(200,0,26,0.12);
+  display:flex;align-items:center;justify-content:center;z-index:2;}
+.reel-hub-hole{width:28%;height:28%;border-radius:50%;background:rgba(10,18,32,0.90);border:1px solid rgba(200,0,26,0.45);}
+.reel-spokes-svg{position:absolute;inset:0;width:100%;height:100%;animation:reelSpin 12s linear infinite;}
+.reel-filmstrip-wrap{position:absolute;bottom:-36px;left:-20px;right:-20px;height:28px;overflow:hidden;
+  border-top:1px solid rgba(200,0,26,0.40);border-bottom:1px solid rgba(200,0,26,0.40);}
+.reel-filmstrip{position:absolute;top:0;left:0;width:200%;height:100%;
+  background:repeating-linear-gradient(90deg,rgba(200,0,26,0.42) 0px,rgba(200,0,26,0.42) 4px,rgba(26,46,74,0.65) 4px,rgba(26,46,74,0.65) 22px);
+  animation:stripLoop 1.8s linear infinite;}
+@keyframes stripLoop{from{transform:translateX(0)}to{transform:translateX(-22px)}}
+.reel-stat{position:absolute;display:flex;flex-direction:column;align-items:flex-start;gap:2px;}
+.reel-stat-label{font-family:var(--font-type);font-size:8px;letter-spacing:3px;text-transform:uppercase;color:rgba(200,0,26,0.80);}
+.reel-stat-val{font-family:var(--font-stamp);font-size:22px;letter-spacing:2px;color:#fff;line-height:1;text-shadow:0 0 16px rgba(200,0,26,0.45);}
+.reel-stat-bar{width:100%;height:2px;background:linear-gradient(to right,var(--red),rgba(200,0,26,0.15));margin-top:2px;}
+.rs-top-left{top:8%;left:-18%;animation:statFloat 5s ease-in-out infinite}
+.rs-top-right{top:8%;right:-18%;animation:statFloat 4.5s ease-in-out .6s infinite}
+.rs-bottom{bottom:16%;right:-20%;animation:statFloat 5.5s ease-in-out 1.2s infinite}
+@keyframes statFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.reel-line-v{position:absolute;left:-50px;top:12%;bottom:12%;width:1px;background:linear-gradient(to bottom,transparent,rgba(200,0,26,0.55),transparent);}
+.reel-line-h{position:absolute;top:-18px;left:12%;right:12%;height:1px;background:linear-gradient(to right,transparent,rgba(200,0,26,0.40),transparent);}
+.reel-scan{position:absolute;inset:0;border-radius:50%;overflow:hidden;pointer-events:none;}
+.reel-scan::after{content:"";position:absolute;top:0;left:-100%;width:40%;height:100%;
+  background:linear-gradient(to right,transparent,rgba(255,255,255,0.04),transparent);animation:scanSweep 3s ease-in-out infinite;}
+@keyframes scanSweep{0%{left:-40%;opacity:0}20%{opacity:1}80%{opacity:1}100%{left:140%;opacity:0}}
+.corner{position:absolute;width:18px;height:18px;border-color:rgba(200,0,26,0.45);border-style:solid;pointer-events:none;z-index:3;}
+.c-tl{top:70px;left:16px;border-width:2px 0 0 2px}.c-tr{top:70px;right:16px;border-width:2px 2px 0 0}
+.c-bl{bottom:24px;left:16px;border-width:0 0 2px 2px}.c-br{bottom:24px;right:16px;border-width:0 2px 2px 0}
+.status-badge{position:absolute;bottom:clamp(28px,5vh,60px);left:clamp(24px,5vw,72px);z-index:3;
+  display:flex;align-items:center;gap:8px;font-family:var(--font-type);font-size:10px;
+  letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.40);
+  opacity:0;animation:fadeSlideUp .7s ease 1.1s forwards;}
+.status-dot{width:7px;height:7px;border-radius:50%;background:var(--red);
+  box-shadow:0 0 8px rgba(200,0,26,0.80);animation:pulse 1.8s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.32;transform:scale(0.68)}}
+@media(max-width:720px){
+  .hero{grid-template-columns:1fr;grid-template-rows:auto}
+  .hero-right{display:flex;height:220px;align-items:center;justify-content:center;overflow:visible;}
+  .hero-right::before{display:none}
+  .hero-visual{padding:10px 16px;height:220px;}
+  .hero-reel{width:clamp(160px,55vw,220px);}
+  .reel-stat,.reel-line-v,.reel-line-h,.reel-filmstrip-wrap{display:none}
+  .hero-left{padding:clamp(32px,8vw,60px) clamp(20px,5vw,40px);text-align:center;order:-1}
+  .hero-name-wrap::after{animation:lineGrowCenter .8s ease 1s forwards;}
+  @keyframes lineGrowCenter{from{width:0;left:50%}to{width:50%;left:25%}}
+  .hero-sub{margin:20px auto 0;max-width:300px}
+  .hero-btns{justify-content:center}
+  .status-badge{left:50%;transform:translateX(-50%)}
 }
 
-/* BUT DO NOT affect start.png and pause.png */
-.p5-playhero img[src*="start.png"],
-.p5-playhero img[src*="pause.png"],
-.p5-bigplay img[src*="start.png"],
-.p5-bigplay img[src*="pause.png"]{
-
-  filter: none !important;
-
-}
-
-  /* ==========================================================
-   ✅ DESKTOP ONLY — VIDEO PLAYER CONTROLS (ONE VARIABLE)
-   Resizes: button box + icon + spacing together
-   ========================================================== */
-@media (min-width: 769px) and (hover:hover) and (pointer:fine){
-
-  :root{
-    --vp-btn: 42px;  /* 🔥 change ONLY this number */
-  }
-
-  /* Optional: scale spacing/padding of the controls row too */
-  .p5-player .p5-controls{
-    gap: calc(var(--vp-btn) * 0.20);                 /* button spacing */
-    padding: calc(var(--vp-btn) * 0.22) calc(var(--vp-btn) * 0.26); /* bar padding */
-  }
-
-  /* Button box becomes fixed-size square */
-  .p5-player .p5-btn{
-    width: var(--vp-btn);
-    height: var(--vp-btn);
-
-    padding: 0;           /* important so size is controlled by width/height */
-    min-width: 0;
-    min-height: 0;
-
-    border-radius: calc(var(--vp-btn) * 0.28);
-
-    display: grid;
-    place-items: center;
-  }
-
-  /* Icon scales with the button */
-  .p5-player .p5-icon{
-    width: calc(var(--vp-btn) * 0.55);
-    height: calc(var(--vp-btn) * 0.55);
-  }
-
-  /* Optional: make time text scale slightly with the button size */
-  .p5-player .p5-time{
-    font-size: calc(var(--vp-btn) * 0.28);
-    min-width: calc(var(--vp-btn) * 1.2);
-  }
-
-  /* Optional: make the slider height scale a bit */
-  .p5-player .p5-progress{
-    height: calc(var(--vp-btn) * 0.14);
-  }
-  .p5-player .p5-progress::-webkit-slider-thumb{
-    width: calc(var(--vp-btn) * 0.33);
-    height: calc(var(--vp-btn) * 0.33);
-  }
-
-}
-  .p5-time{ min-width:54px; font-size:12px; opacity:0.9; }  
-  .p5-progress{  
-    flex:1;  
-    min-width:0;  
-    height:6px;  
-    -webkit-appearance:none;  
-    appearance:none;  
-    background:rgba(0,201,122,0.22);  
-    border-radius:999px;  
-    outline:none;  
-  }  
-  .p5-progress::-webkit-slider-thumb{  
-    -webkit-appearance:none;  
-    appearance:none;  
-    width:14px;  
-    height:14px;  
-    border-radius:999px;  
-    background:var(--p5-red);  
-    box-shadow:0 0 20px rgba(0,201,122,0.7);  
-    cursor:pointer;  
-  }  
-  
-  .video-label{  
-    padding: 12px 14px;  
-    text-align:left;  
-    font-size: 14px;  
-    letter-spacing: 0.5px;  
-    color: rgba(255,255,255,0.88);  
-    border-top: 1px solid rgba(127,255,212,0.08);  
-    background: rgba(0,0,0,0.35);  
-  }  
-  .video-label span{  
-    color: rgba(255,255,255,0.65);  
-    font-size: 12px;  
-    display:block;  
-    margin-top:4px;  
-  }  
-  
-  /* CONTACT (same as before, trimmed for brevity) */  
-  .contact{ padding:110px 20px 120px; background: rgba(0,0,0,0.92); }  
-  .contact-wrap{ max-width:1100px; margin:0 auto; border-radius:26px; position:relative; overflow:hidden; padding:0; }  
-  .contact-wrap::before{  
-    content:""; position:absolute; inset:0; border-radius:26px; padding:2px;  
-    background: linear-gradient(180deg, rgba(0,201,122,1), rgba(0,201,122,0.35));  
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);  
-    -webkit-mask-composite: xor; mask-composite: exclude;  
-    box-shadow: 0 0 28px rgba(0,201,122,0.35), 0 0 70px rgba(0,201,122,0.18);  
-    pointer-events:none; z-index:1;  
-  }  
-  .contact-inner{  
-    position:relative; z-index:2; border-radius:26px; padding:34px 30px;  
-    background:  
-      radial-gradient(circle at 30% 30%, rgba(0,201,122,0.22), rgba(0,0,0,0) 55%),  
-      radial-gradient(circle at 70% 65%, rgba(127,255,212,0.08), rgba(0,0,0,0) 55%),  
-      linear-gradient(180deg, rgba(12,12,16,0.92), rgba(0,0,0,0.85));  
-    border:1px solid rgba(127,255,212,0.08);  
-    box-shadow: 0 30px 90px rgba(0,0,0,0.7);  
-  }  
-  .contact-kicker{ margin:0 0 10px; letter-spacing:1px; opacity:0.9; font-weight:800; text-transform:uppercase; font-size:14px; color: rgba(255,255,255,0.78); }  
-  .contact-title{ margin:0; font-weight:900; letter-spacing:2px; text-transform:uppercase; font-size:clamp(34px,4.6vw,64px); text-shadow:0 12px 34px rgba(0,0,0,0.7); }  
-  .contact-sub{ margin:14px auto 0; max-width:820px; opacity:0.82; line-height:1.55; font-size:14px; }  
-  .contact-row{ margin-top:26px; display:flex; align-items:center; justify-content:space-between; gap:22px; flex-wrap:wrap; }  
-  .contact-profile{ display:flex; align-items:center; gap:18px; text-align:left; min-width:260px; }  
-  .pfp-ring{  
-    width:98px; height:98px; border-radius:50%; padding:4px;  
-    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.22), rgba(255,255,255,0) 45%);  
-    border:2px solid rgba(0,201,122,0.95);  
-    box-shadow: 0 0 26px rgba(0,201,122,0.45), 0 0 65px rgba(0,201,122,0.22);  
-    animation:pfpPulse 2.6s ease-in-out infinite;  
-    flex:0 0 auto;  
-  }  
-  @keyframes pfpPulse{  
-    0%,100%{ transform: translateY(0); box-shadow:0 0 26px rgba(0,201,122,0.45),0 0 65px rgba(0,201,122,0.22); }  
-    50%{ transform: translateY(-2px); box-shadow:0 0 36px rgba(0,201,122,0.70),0 0 85px rgba(0,201,122,0.32); }  
-  }  
-  .pfp-img{ width:100%; height:100%; border-radius:50%; object-fit:cover; display:block; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06); }  
-  .contact-name{ margin:0; font-weight:900; font-size:20px; letter-spacing:0.6px; }  
-  .contact-note{ margin:6px 0 0; font-size:13px; opacity:0.85; }  
-  .contact-actions{ display:flex; gap:14px; flex-wrap:wrap; justify-content:flex-end; margin-left:auto; }  
-  .contact-btn{  
-    display:inline-flex; align-items:center; gap:12px; padding:14px 18px; border-radius:16px;  
-    text-decoration:none; font-weight:900; letter-spacing:0.4px; color:#fff;  
-    background: rgba(0,0,0,0.55); border:1px solid rgba(255,255,255,0.14);  
-    box-shadow: 0 0 24px rgba(0,201,122,0.18), inset 0 0 0 1px rgba(255,255,255,0.04);  
-    position:relative; overflow:hidden;  
-    transition: transform .18s ease, box-shadow .2s ease, border-color .2s ease;  
-  }  
-  .contact-btn:hover{ transform: translateY(-3px) scale(1.02); border-color: rgba(0,201,122,0.60);  
-    box-shadow: 0 0 36px rgba(0,201,122,0.34), 0 0 80px rgba(0,201,122,0.12), inset 0 0 0 1px rgba(255,255,255,0.05);  
-  }  
-  .btn-ico{ width:22px; height:22px; display:block; filter:drop-shadow(0 0 8px rgba(0,201,122,0.30)) drop-shadow(0 0 18px rgba(0,201,122,0.22)); }  
-  
-  footer{ padding:50px 20px; font-size:14px; background:rgba(0,0,0,0.92); opacity:0.9; }  
-  
-  /* =========================  
-     ✅ BIG P5 HERO MUSIC PLAYER (TOP BAR)  
-     - fixed at top  
-     - ONLY shows when music is playing  
-     ========================= */  
-  .p5-music-hero{  
-    position:fixed;  
-    top:calc(12px + env(safe-area-inset-top));  
-    left:50%;  
-    transform:translateX(-50%) translateY(10px);  
-  
-    width:min(760px, calc(100% - 18px));  
-    z-index:99998;  
-  
-    opacity:0;  
-    pointer-events:none;  
-    transition: opacity .55s ease, transform .55s ease;  
-  }  
-  .p5-music-hero.show{  
-    opacity:1;  
-    transform:translateX(-50%) translateY(0);  
-    pointer-events:auto;  
-  }  
-  .p5-music-hero.hide{  
-    opacity:0;  
-    transform:translateX(-50%) translateY(10px);  
-    pointer-events:none;  
-  }  
-  
-  .p5-music-frame{  
-    display:flex;  
-    gap:18px;  
-    align-items:stretch;  
-  
-    padding:16px;  
-    border-radius:26px;  
-  
-  background:
-  radial-gradient(
-    circle at 18% 35%,
-    rgba(255, 0, 60, 0.10),
-    rgba(0, 0, 0, 0) 60%
-  ),
-  radial-gradient(
-    circle at 72% 60%,
-    rgba(255, 255, 255, 0.04),
-    rgba(0, 0, 0, 0) 65%
-  ),
-  linear-gradient(
-    180deg,
-    rgba(12, 12, 16, 0.46),
-    rgba(0, 0, 0, 0.30)
-  );
-  
-    border:1px solid rgba(255,255,255,0.10);  
-    box-shadow:  
-      0 30px 90px rgba(0,0,0,0.65),  
-      0 0 45px rgba(0,201,122,0.12);  
-   backdrop-filter: blur(1px);
--webkit-backdrop-filter: blur(1px);
-  }  
-  
-  .p5-music-left{ display:flex; align-items:center; justify-content:center; }  
-  .p5-cover-wrap{  
-    position:relative;  
-    width:122px; height:122px;  
-    border-radius:22px;  
-    overflow:hidden;  
-    border:2px solid rgba(0,201,122,0.65);  
-    box-shadow: 0 0 26px rgba(0,201,122,0.30);  
-  }  
-  .p5-cover{  
-    width:100%; height:100%;  
-    object-fit:cover;  
-    display:block;  
-    transform: scale(1.02);  
-  }  
-  .p5-cover-glow{  
-    position:absolute; inset:-40%;  
-    background: radial-gradient(circle at 30% 30%, rgba(0,201,122,0.55), rgba(0,0,0,0) 55%);  
-    mix-blend-mode:screen;  
-    opacity:0.35;  
-    pointer-events:none;  
-  }  
-  
-  .p5-music-right{ flex:1; min-width:0; display:flex; flex-direction:column; gap:10px; }  
-  
-  .p5-music-top{  
-    display:flex;  
-    align-items:center;  
-    justify-content:space-between;  
-    gap:14px;  
-  }  
-  .p5-track-meta{ text-align:left; min-width:0; }  
-  .p5-track-kicker{  
-    font-weight:900;  
-    letter-spacing:1px;  
-    text-transform:uppercase;  
-    font-size:12px;  
-    opacity:0.85;  
-  }  
-  /* ✅ Title container (viewport with soft fade edges) */
-/* =========================================
-   SMART MARQUEE TITLE (Desktop + Mobile)
-   ========================================= */
-
-.p5-track-title{  
-  margin-top:4px;  
-  font-weight:900;  
-  font-size:16px;  
-  letter-spacing:.3px;  
+/* ══════════════════ ABOUT ══════════════════ */
+.about{
+  background:var(--paper);
+  padding:90px clamp(16px,5vw,60px) 100px;
   position:relative;
   overflow:hidden;
-  white-space:nowrap;
-  max-width:100%;
+}
+.about::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;
+  background:repeating-linear-gradient(90deg,var(--denim) 0,var(--denim) 8px,transparent 8px,transparent 14px);opacity:0.30;}
+
+/* Decorative large background letter */
+.about-bg-letter{
+  position:absolute;right:-2%;top:50%;transform:translateY(-50%);
+  font-family:var(--font-stamp);font-size:clamp(200px,28vw,380px);
+  color:transparent;-webkit-text-stroke:1px rgba(92,58,30,0.07);
+  line-height:1;user-select:none;pointer-events:none;letter-spacing:-10px;
 }
 
-.p5-track-title .marquee{
-  display:inline-block;
-  white-space:nowrap;
-  transform:translateX(0);
-  opacity:1;
-  will-change:transform, opacity;
+.about-inner{
+  max-width:1100px;margin:0 auto;
+  display:grid;grid-template-columns:1fr 1.6fr;gap:clamp(40px,6vw,90px);
+  align-items:center;position:relative;z-index:1;
 }
 
-.p5-track-title.animate .marquee{
-  animation: p5SmartMarquee var(--marquee-speed, 12s) linear infinite;
+/* Left — identity block */
+.about-id{display:flex;flex-direction:column;gap:20px;}
+.about-stamp{
+  font-family:var(--font-stamp);
+  font-size:clamp(58px,8vw,110px);
+  letter-spacing:3px;
+  color:var(--ink);
+  line-height:0.88;
+}
+.about-stamp em{color:var(--red);font-style:normal;display:block;}
+.about-role-tag{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:var(--font-type);font-size:10px;letter-spacing:3px;text-transform:uppercase;
+  color:var(--leather);
+}
+.about-role-tag::before{content:"";width:28px;height:1px;background:var(--red);}
+
+/* stat pills */
+.about-stats{display:flex;gap:12px;flex-wrap:wrap;margin-top:4px;}
+.about-stat{
+  padding:8px 14px;
+  border:1px solid rgba(92,58,30,0.22);
+  background:rgba(92,58,30,0.05);
+  font-family:var(--font-type);
+}
+.about-stat-num{font-family:var(--font-stamp);font-size:26px;letter-spacing:1px;color:var(--red);display:block;line-height:1;}
+.about-stat-lbl{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--leather);opacity:0.75;}
+
+/* Right — story block */
+.about-story{position:relative;}
+.about-quote-mark{
+  font-family:var(--font-hand);font-size:120px;line-height:0.6;
+  color:rgba(200,0,26,0.12);position:absolute;top:-10px;left:-16px;
+  user-select:none;pointer-events:none;
+}
+.about-p{
+  font-family:var(--font-hand);
+  font-size:clamp(19px,2.1vw,24px);
+  color:var(--ink-mid);
+  line-height:1.70;
+  margin-bottom:20px;
+}
+.about-p em{color:var(--red);font-style:normal;}
+.about-p strong{color:var(--ink);font-weight:600;}
+.about-p:last-of-type{margin-bottom:0;}
+
+/* Torn paper divider line */
+.about-divider{
+  width:60px;height:3px;background:var(--red);margin:28px 0;
+  position:relative;
+}
+.about-divider::after{
+  content:"";position:absolute;top:-2px;left:70px;
+  width:24px;height:1px;background:rgba(200,0,26,0.30);
 }
 
-@keyframes p5SmartMarquee{
-  0%   { transform:translateX(0); opacity:1; }
-  70%  { transform:translateX(calc(-1 * var(--marquee-distance))); opacity:1; }
-  85%  { transform:translateX(calc(-1 * var(--marquee-distance) - 20px)); opacity:0; }
-  86%  { transform:translateX(100%); opacity:0; }
-  100% { transform:translateX(0); opacity:1; }
+/* Skills strip */
+.about-skills{
+  display:flex;gap:8px;flex-wrap:wrap;margin-top:28px;
 }
-  /* =========================================
-   Desktop: Fade edges ONLY while animating
-   ========================================= */
-
-@media (hover:hover) and (pointer:fine){
-
-  .p5-track-title.animate{
-    -webkit-mask-image: linear-gradient(
-      90deg,
-      transparent 0%,
-      #000 8%,
-      #000 92%,
-      transparent 100%
-    );
-    mask-image: linear-gradient(
-      90deg,
-      transparent 0%,
-      #000 8%,
-      #000 92%,
-      transparent 100%
-    );
-  }
-
+.about-skill{
+  font-family:var(--font-type);font-size:9px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--denim);border:1px solid rgba(26,46,74,0.30);
+  padding:5px 10px;
+  background:rgba(26,46,74,0.05);
+  transition:background .2s,border-color .2s,color .2s;
 }
-  
-.p5-track-artist{  
-  margin-top:4px;  
-  font-weight:700;  
-  font-size:12px;  
-  opacity:0.75;  
-  letter-spacing:.25px;  
-  white-space:nowrap;  
-  overflow:hidden;  
-  text-overflow:ellipsis;  
-}  
-  
-  .p5-top-actions{  
-    display:flex;  
-    align-items:center;  
-    gap:10px;  
-    flex:0 0 auto;  
-  }  
-  
-  .p5-mbtn{  
-    background:#0b0b0b;  
-    border:1px solid rgba(255,255,255,0.12);  
-    color:#fff;  
-    border-radius:14px;  
-    padding:10px 12px;  
-    cursor:pointer;  
-    font-weight:900;  
-    transition: transform .15s ease, box-shadow .2s ease, border-color .2s ease, opacity .2s ease;  
-    user-select:none;  
-  }  
-  .p5-mbtn:hover{  
-    border-color: rgba(0,201,122,0.60);  
-    box-shadow:0 0 24px rgba(0,201,122,0.22);  
-    transform: translateY(-1px);  
-  }  
-  .p5-mbtn:active{ transform: translateY(0) scale(0.98); }  
-  .p5-mbtn.active{  
-    border-color: rgba(0,201,122,0.85);  
-    box-shadow:0 0 30px rgba(0,201,122,0.30);  
-  }  
-  
-  .p5-ico{  
-  width:18px;  
-  height:18px;  
-  display:block;  
-}  
-  
-  .p5-vol-box{  
-  display:flex;  
-  align-items:center;  
-  gap:10px;  
-}  
-  .p5-vol-btn{  
-    background: rgba(0,70,45,0.55);  
-    border-color: rgba(0,201,122,0.50);  
-  }  
-  .p5-vol-btn:hover{  
-    border-color: rgba(0,201,122,0.95);  
-    box-shadow:0 0 30px rgba(0,201,122,0.35);  
-  }  
-  
-  .p5-vol-slider{  
-  width:150px;  
-  height:8px;  
-  -webkit-appearance:none;  
-  appearance:none;  
-  border-radius:999px;  
-  outline:none;  
-  background: rgba(0,201,122,0.25);  
-}  
-  .p5-vol-slider::-webkit-slider-thumb{  
-    -webkit-appearance:none;  
-    appearance:none;  
-    width:18px;  
-    height:18px;  
-    border-radius:999px;  
-    background:#fff;  
-    box-shadow: 0 0 22px rgba(255,255,255,0.35), 0 0 28px rgba(0,201,122,0.25);  
-    cursor:pointer;  
-  }  
-  
-  .p5-music-mid{  
-    display:flex;  
-    align-items:center;  
-    justify-content:center;  
-    gap:14px;  
-    margin-top:2px;  
-  }  
-  .p5-skip{ padding:10px 14px; }  
-  
-  .p5-playhero{  
-    width:58px;  
-    height:58px;  
-    border-radius:18px;  
-    border:2px solid rgba(255,255,255,0.20);  
-    background: rgba(0,0,0,0.50);  
-    box-shadow: 0 0 40px rgba(0,201,122,0.26);  
-    display:grid;  
-    place-items:center;  
-    cursor:pointer;  
-    transition: transform .18s ease, box-shadow .2s ease, border-color .2s ease;  
-  }  
-  .p5-playhero:hover{  
-    transform: scale(1.04);  
-    border-color: rgba(0,201,122,0.65);  
-    box-shadow: 0 0 54px rgba(0,201,122,0.34);  
-  }  
-  .p5-playhero:active{ transform: scale(0.99); }  
-  .p5-playhero img{ width:26px; height:26px; display:block; }  
-  
-  .p5-music-bottom{ display:flex; flex-direction:column; gap:8px; }  
-  .p5-time-row{  
-    display:flex;  
-    justify-content:space-between;  
-    opacity:0.9;  
-    font-size:12px;  
-    font-weight:800;  
-  }  
-  
-  .p5-seek{  
-    width:100%;  
-    height:8px;  
-    -webkit-appearance:none;  
-    appearance:none;  
-    border-radius:999px;  
-    outline:none;  
-    background: rgba(0,201,122,0.22);  
-    transition: background .12s linear;  
-  }  
-  .p5-seek::-webkit-slider-thumb{  
-    -webkit-appearance:none;  
-    appearance:none;  
-    width:18px;  
-    height:18px;  
-    border-radius:999px;  
-    background: var(--p5-red);  
-    box-shadow: 0 0 22px rgba(0,201,122,0.55);  
-    cursor:pointer;  
-  }  
-  
-  /* ✅ remove the old dock entirely */
-.music-dock{ display:none !important; }
+.about-skill:hover{background:var(--denim);color:#fff;border-color:var(--denim);}
 
-@media (max-width:768px){
-  .hero{ min-height:92svh; min-height:92dvh; }
-  .title{font-size:38px;letter-spacing:3px;}
-  .subtitle{font-size:15px;max-width:320px;}
-  .button{padding:14px 28px;}
-
-  /* Mobile: hide both by default */
-  .enkidu-left,
-  .enkidu-right{
-    display:none;
-    max-height:85vh;
-  }
-
-  .enkidu-left,
-.enkidu-right{
-  left:50% !important;
-  right:auto !important;
-  transform:translateX(-50%) !important;
+@media(max-width:820px){
+  .about-inner{grid-template-columns:1fr;}
+  .about-bg-letter{display:none;}
+  .about-stamp{font-size:clamp(48px,12vw,80px);}
 }
 
-  .p5-controls{ left:14px; right:14px; flex-wrap:wrap; row-gap:8px; padding:12px 12px; }
-  .p5-btn{ padding:10px 12px; min-width:42px; min-height:42px; border-radius:12px; font-size:16px; }
-  .p5-progress{ flex: 1 1 100%; height:8px; }
-  .p5-progress::-webkit-slider-thumb{ width:18px; height:18px; }
-  .p5-time{ min-width:auto; }
+/* ══════════════════ PORTFOLIO ══════════════════ */
+.portfolio{background:var(--paper);padding:80px clamp(16px,5vw,60px) 90px;position:relative;}
+.portfolio::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;
+  background:repeating-linear-gradient(90deg,var(--denim) 0,var(--denim) 8px,transparent 8px,transparent 14px);opacity:0.30;}
+.portfolio-sub{margin-bottom:72px;}
+.portfolio-sub+.portfolio-sub{padding-top:60px;border-top:1px solid rgba(92,58,30,0.18);position:relative;}
+.portfolio-sub+.portfolio-sub::before{content:"";position:absolute;top:0;left:0;width:40px;height:2px;background:var(--red);}
+.section-label{display:flex;align-items:center;gap:14px;margin-bottom:10px;}
+.section-label::before,.section-label::after{content:"";flex:1;height:1px;background:var(--leather);opacity:0.25}
+.section-eyebrow{font-family:var(--font-type);font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--leather);white-space:nowrap;}
+.section-title{font-family:var(--font-stamp);font-size:clamp(32px,5vw,62px);letter-spacing:5px;
+  color:var(--ink);margin-bottom:10px;line-height:1;position:relative;display:inline-block;}
+.section-title::after{content:"";position:absolute;bottom:-6px;left:0;width:40px;height:3px;background:var(--red);}
+.section-desc{font-family:var(--font-type);font-size:11px;color:var(--leather);letter-spacing:1px;margin-bottom:32px;margin-top:14px;opacity:0.72;}
+.video-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:28px;}
+.video-grid-3{grid-template-columns:repeat(auto-fit,minmax(300px,1fr));}
+
+/* ── VIDEO CARD ── */
+.video-card{background:#fff;border:1px solid rgba(92,58,30,0.18);position:relative;
+  box-shadow:3px 4px 18px rgba(28,16,8,0.10),0 1px 0 rgba(92,58,30,0.10);
+  transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s ease,opacity .65s ease;
+  opacity:0;transform:translateY(28px);}
+.video-card.show{opacity:1;transform:translateY(0)}
+.video-card:hover{transform:translateY(-5px) rotate(-0.3deg)!important;box-shadow:6px 10px 30px rgba(28,16,8,0.16)}
+.card-pin{position:absolute;top:-10px;left:50%;transform:translateX(-50%);width:16px;height:16px;
+  border-radius:50%;background:radial-gradient(circle at 35% 30%,#e0001d,#8a0010);
+  box-shadow:0 2px 6px rgba(0,0,0,0.32),inset 0 1px 2px rgba(255,255,255,0.20);z-index:4;}
+.card-num{position:absolute;top:10px;left:10px;z-index:5;font-family:var(--font-type);font-size:9px;
+  letter-spacing:2px;color:var(--leather);background:var(--paper-dark);border:1px solid rgba(92,58,30,0.25);padding:2px 7px;}
+.card-tape{height:6px;background:repeating-linear-gradient(90deg,var(--red) 0,var(--red) 20px,rgba(180,0,15,0.70) 20px,rgba(180,0,15,0.70) 22px);}
+.card-tape-long{background:repeating-linear-gradient(90deg,var(--leather) 0,var(--leather) 20px,rgba(92,58,30,0.65) 20px,rgba(92,58,30,0.65) 22px);}
+
+/* ── VIDEO PLAYER ── */
+.p5-player{position:relative;width:100%;background:#000}
+.p5-video{width:100%;display:block;background:#000;aspect-ratio:16/9;object-fit:contain}
+.p5-player.playing .p5-video{object-fit:contain}
+.p5-player:fullscreen,.p5-player:-webkit-full-screen{width:100vw;height:100vh;display:flex;flex-direction:column;justify-content:center;background:#000;}
+.p5-player:fullscreen .p5-video,.p5-player:-webkit-full-screen .p5-video{width:100%;height:calc(100vh - 110px);max-height:calc(100vh - 110px);object-fit:contain;background:#000;aspect-ratio:auto;}
+.p5-player:fullscreen .p5-controls,.p5-player:-webkit-full-screen .p5-controls{width:100%;padding:14px 16px 16px;border-top:2px solid var(--red);background:linear-gradient(to top,rgba(12,18,28,0.96),rgba(12,18,28,0.88));}
+.p5-player:fullscreen .p5-seek-row,.p5-player:-webkit-full-screen .p5-seek-row{gap:10px;margin-bottom:10px;}
+.p5-player:fullscreen .p5-time,.p5-player:-webkit-full-screen .p5-time{font-size:12px;min-width:42px;}
+.p5-player:fullscreen .p5-seek,.p5-player:-webkit-full-screen .p5-seek{height:5px;}
+.p5-player:fullscreen .p5-seek::-webkit-slider-thumb,.p5-player:-webkit-full-screen .p5-seek::-webkit-slider-thumb{width:14px;height:14px;}
+.p5-player:fullscreen .p5-btn-row,.p5-player:-webkit-full-screen .p5-btn-row{gap:8px;}
+.p5-player:fullscreen .p5-btn,.p5-player:-webkit-full-screen .p5-btn{width:44px;height:44px;}
+.p5-player:fullscreen .p5-icon,.p5-player:-webkit-full-screen .p5-icon{width:18px;height:18px;}
+.p5-player:fullscreen .p5-icon-play,.p5-player:-webkit-full-screen .p5-icon-play{width:18px;height:18px;}
+.p5-player:fullscreen .p5-vol-slider,.p5-player:-webkit-full-screen .p5-vol-slider{width:90px;height:5px;}
+.p5-player:fullscreen .p5-vol-slider::-webkit-slider-thumb,.p5-player:-webkit-full-screen .p5-vol-slider::-webkit-slider-thumb{width:12px;height:12px;}
+.p5-player:fullscreen .p5-bigplay,.p5-player:-webkit-full-screen .p5-bigplay{width:78px;height:78px;}
+.p5-player:fullscreen .p5-bigplay img,.p5-player:-webkit-full-screen .p5-bigplay img{width:24px;height:24px;}
+@media(max-width:720px){
+  .p5-player:fullscreen .p5-controls,.p5-player:-webkit-full-screen .p5-controls{padding:12px 12px 14px;}
+  .p5-player:fullscreen .p5-btn,.p5-player:-webkit-full-screen .p5-btn{width:42px;height:42px;}
+  .p5-player:fullscreen .p5-vol-slider,.p5-player:-webkit-full-screen .p5-vol-slider{width:72px;}
 }
-
-.enkidu-left,
-.enkidu-right{
-  z-index:2;
+.p5-player.fs-mode{position:fixed;inset:0;width:100vw;height:100dvh;z-index:99999;display:flex;flex-direction:column;justify-content:center;background:#000;}
+.p5-player.fs-mode .p5-video{width:100%;height:calc(100dvh - 110px);object-fit:contain;background:#000;}
+.p5-player.fs-mode .p5-controls{width:100%;padding:14px 16px 16px;border-top:2px solid var(--red);background:linear-gradient(to top,rgba(12,18,28,0.96),rgba(12,18,28,0.88));}
+body.no-scroll{overflow:hidden;}
+.p5-bigplay{position:absolute;inset:0;margin:auto;width:58px;height:58px;background:rgba(0,0,0,0.52);border:2px solid rgba(200,0,26,0.72);border-radius:50%;display:grid;place-items:center;cursor:pointer;z-index:6;box-shadow:0 0 22px rgba(200,0,26,0.32);transition:transform .2s,box-shadow .2s,background .2s;}
+.p5-bigplay:hover{transform:scale(1.10);background:rgba(200,0,26,0.20);box-shadow:0 0 38px rgba(200,0,26,0.52)}
+.p5-bigplay img{width:19px;height:19px;filter:brightness(0) invert(1);margin-left:3px}
+.p5-hint{position:absolute;left:50%;top:38%;transform:translate(-50%,-50%);padding:5px 12px;background:rgba(0,0,0,0.80);border:1px solid rgba(200,0,26,0.50);font-family:var(--font-type);font-size:11px;letter-spacing:1px;color:var(--red);opacity:0;pointer-events:none;transition:opacity .15s;z-index:7;}
+.p5-hint.show{opacity:1}
+.p5-gestures{position:absolute;left:0;right:0;top:0;bottom:54px;display:flex;z-index:4;pointer-events:none;}
+.p5-zone{flex:1;background:transparent;border:none;padding:0;-webkit-tap-highlight-color:transparent}
+.p5-controls{position:relative;z-index:8;background:var(--denim);padding:8px 10px 10px;border-top:2px solid var(--red);}
+.p5-seek-row{display:flex;align-items:center;gap:7px;margin-bottom:7px}
+.p5-time{font-family:var(--font-type);font-size:10px;color:rgba(255,255,255,0.55);white-space:nowrap;min-width:32px}
+.p5-seek{flex:1;height:3px;-webkit-appearance:none;appearance:none;background:rgba(200,0,26,0.22);outline:none;cursor:pointer;border-radius:0}
+.p5-seek::-webkit-slider-thumb{-webkit-appearance:none;width:11px;height:11px;background:var(--red);box-shadow:0 0 7px rgba(200,0,26,0.80)}
+.p5-btn-row{display:flex;align-items:center;gap:5px}
+.p5-spacer{flex:1}
+.p5-btn{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.14);color:#fff;width:32px;height:32px;padding:0;cursor:pointer;display:grid;place-items:center;flex-shrink:0;transition:background .15s,border-color .15s;}
+.p5-btn:hover{background:rgba(200,0,26,0.22);border-color:rgba(200,0,26,0.60)}
+.p5-icon{width:13px;height:13px;filter:brightness(0) invert(1)}
+.p5-icon-play{width:13px;height:13px}
+.p5-vol-slider{width:52px;height:3px;-webkit-appearance:none;appearance:none;background:rgba(255,255,255,0.18);outline:none;cursor:pointer;border-radius:0;}
+.p5-vol-slider::-webkit-slider-thumb{-webkit-appearance:none;width:9px;height:9px;background:var(--red);box-shadow:0 0 5px rgba(200,0,26,0.70)}
+@media(max-width:720px){
+  .p5-btn{width:38px;height:38px;}
+  .p5-icon,.p5-icon-play{width:15px;height:15px;}
+  .p5-vol-slider{width:64px;height:4px;}
+  .p5-seek{height:4px;}
+  .p5-bigplay{width:54px;height:54px;}
 }
- /* ==========================================================
-   ✅ MOBILE HERO MUSIC BAR + EDITOR VARS
-   ========================================================== */
-@media (max-width: 820px) {
+.card-label{padding:12px 14px 14px;border-top:1px solid rgba(92,58,30,0.12);background:var(--paper);position:relative;}
+.card-label::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--red);opacity:0.65;}
+.card-label-long::before{background:var(--leather);}
+.card-title{font-family:var(--font-stamp);font-size:20px;letter-spacing:2px;color:var(--ink);line-height:1}
+.card-meta{margin-top:4px;font-family:var(--font-type);font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--leather);opacity:0.78;}
+.card-hand{position:absolute;top:10px;right:12px;font-family:var(--font-hand);font-size:13px;color:var(--ink-dim);transform:rotate(2deg);}
 
-  :root{
-    /* size */
-    --m-player-width: min(92vw, 420px);
-    --m-player-top: calc(8px + env(safe-area-inset-top));
+/* ══════════════════ PRICING ══════════════════ */
+.pricing{background:var(--denim);padding:100px clamp(16px,5vw,60px) 110px;position:relative;overflow:hidden;text-align:center;}
+.pricing::before{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(-45deg,transparent,transparent 3px,rgba(255,255,255,0.009) 3px,rgba(255,255,255,0.009) 6px);}
+.pricing-top-line{position:absolute;top:0;left:0;right:0;height:4px;background:var(--red)}
+.pricing-label{display:flex;align-items:center;gap:14px;margin-bottom:10px;}
+.pricing-label::before,.pricing-label::after{content:"";flex:1;height:1px;background:rgba(255,255,255,0.15);opacity:0.6}
+.pricing-eyebrow{font-family:var(--font-type);font-size:10px;letter-spacing:4px;text-transform:uppercase;color:rgba(200,0,26,0.90);white-space:nowrap;}
+.pricing-title{font-family:var(--font-stamp);font-size:clamp(56px,7vw,100px);letter-spacing:5px;color:#fff;margin-bottom:10px;line-height:1;position:relative;display:inline-block;}
+.pricing-title::after{content:"";position:absolute;bottom:-6px;left:0;width:40px;height:3px;background:var(--red);}
+.pricing-sub{font-family:var(--font-type);font-size:14px;color:rgba(255,255,255,0.45);letter-spacing:1px;margin:18px auto 48px;max-width:700px;}
+.pricing-sub strong{color:var(--amber);font-style:normal;font-weight:normal;}
+.pricing-cards{max-width:1000px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:32px;justify-content:center;}
+@media(max-width:640px){.pricing-cards{grid-template-columns:1fr;}}
+.price-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);padding:40px 34px 36px;position:relative;
+  clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,14px 100%,0 calc(100% - 14px));transition:border-color .22s,box-shadow .22s,transform .22s;}
+.price-card:hover{border-color:rgba(200,0,26,0.45);box-shadow:0 0 32px rgba(200,0,26,0.14);transform:translateY(-3px);}
+.price-card::before{content:"";position:absolute;top:0;right:0;width:0;height:0;border-style:solid;border-width:0 14px 14px 0;border-color:transparent rgba(200,0,26,0.50) transparent transparent;}
+.price-badge{display:inline-block;font-family:var(--font-type);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#fff;background:rgba(200,0,26,0.65);padding:4px 10px;margin-bottom:18px;}
+.price-badge-long{background:rgba(92,58,30,0.80);}
+.price-amount{font-family:var(--font-stamp);font-size:clamp(64px,8vw,110px);letter-spacing:2px;color:var(--amber);line-height:1;margin-bottom:4px;}
+.price-starting{font-family:var(--font-type);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-bottom:16px;display:block;}
+.price-desc{font-family:var(--font-body);font-size:16px;color:rgba(255,255,255,0.58);line-height:1.55;margin-bottom:20px;font-weight:400;text-align:left;}
+.price-note{display:block;font-family:var(--font-type);font-size:10px;letter-spacing:1px;color:rgba(255,255,255,0.32);border-top:1px solid rgba(255,255,255,0.08);padding-top:14px;margin-top:6px;font-style:italic;text-align:left;}
+.pricing-footnote{margin:40px auto 0;max-width:900px;text-align:left;font-family:var(--font-type);font-size:11px;letter-spacing:1px;color:rgba(255,255,255,0.35);padding:14px 18px;border:1px solid rgba(255,255,255,0.08);border-left:3px solid rgba(200,0,26,0.55);background:rgba(200,0,26,0.04);line-height:1.6;}
+.pricing-footnote strong{color:var(--amber);font-weight:normal;}
 
-    --m-frame-h: 85px;            /* bar height */
-    --m-pad-y: 8px;
-    --m-pad-x: 12px;
-    --m-radius: 22px;
-    --m-gap: 10px;
-
-    --m-cover: 54px;
-    
-    --m-title: 11px;
-    --m-artist: 9px;
-    --m-time: 10px;
-
-    --m-icon: 8px;
-    --m-btn-pad-y: 6px;
-    --m-btn-pad-x: 8px;
-    --m-btn-radius: 12px;
-
-    --m-play: 33px;
-    --m-play-icon: 16px;
-
-    --m-vol-w: 88px;
-    --m-vol-h: 6px;
-    --m-vol-thumb: 14px;
-
-    --m-seek-h: 6px;
-    --m-seek-thumb: 14px;
-    --m-seek-w: 132%;
-
-    /* MOVE EVERYTHING (X/Y offsets) */
-    --m-frame-x: 0px;
-    --m-frame-y: 0px;
-
-    --m-cover-x: 0px;
-    --m-cover-y: -25px;
-
-    --m-meta-x: 0px;
-    --m-meta-y: 0px;
-
-    --m-actions-x: 10px;
-    --m-actions-y: -5px;
-
-    --m-mid-x: 0px;
-    --m-mid-y: 0px;
-
-    --m-bottom-x: -65px;
-    --m-bottom-y: -14px;
-  }
-
-  .p5-music-hero{
-    width: var(--m-player-width) !important;
-    top: var(--m-player-top) !important;
-    transform: translateX(-50%) translate(var(--m-frame-x), var(--m-frame-y)) !important;
-  }
-
-  .p5-music-frame{
-    position: relative !important;
-    height: var(--m-frame-h) !important;
-    padding: var(--m-pad-y) var(--m-pad-x) !important;
-    border-radius: var(--m-radius) !important;
-
-    display: grid !important;
-    grid-template-columns: var(--m-cover) 1fr auto !important;
-    grid-template-rows: auto auto !important;
-    grid-template-areas:
-      "cover meta right"
-      "cover bottom right" !important;
-
-    align-items: center !important;
-    gap: var(--m-gap) !important;
-    overflow: hidden !important;
-  }
-
-  /* cover */
-  .p5-music-left{ grid-area: cover !important; }
-  .p5-cover-wrap{
-    width: var(--m-cover) !important;
-    height: var(--m-cover) !important;
-    border-radius: 16px !important;
-    transform: translate(var(--m-cover-x), var(--m-cover-y)) !important;
-  }
-
-  /* hide kicker */
-  .p5-track-kicker{ display:none !important; }
-
-  /* meta */
-  .p5-music-top{
-    grid-area: meta !important;
-    margin: 0 !important;
-    display: block !important;
-    transform: translate(var(--m-meta-x), var(--m-meta-y)) !important;
-  }
-  .p5-track-title{
-    font-size: var(--m-title) !important;
-    line-height: 1.1 !important;
-    font-weight: 900 !important;
-    white-space: nowrap !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    -webkit-mask-image: none !important;
-    mask-image: none !important;
-  }
-  
-  .p5-track-artist{
-    font-size: var(--m-artist) !important;
-    line-height: 1.1 !important;
-    font-weight: 700 !important;
-    opacity: .85 !important;
-    white-space: nowrap !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    margin-top: 2px !important;
-  }
-
-  /* right side */
-  .p5-top-right{
-    grid-area: right !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: flex-end !important;
-    gap: 6px !important;
-    transform: translate(var(--m-actions-x), var(--m-actions-y)) !important;
-  }
-
-  .p5-actions-row{
-    display: flex !important;
-    gap: 6px !important;
-    justify-content: flex-end !important;
-  }
-
-  /* buttons */
-  .p5-mbtn{
-    padding: var(--m-btn-pad-y) var(--m-btn-pad-x) !important;
-    border-radius: var(--m-btn-radius) !important;
-  }
-  .p5-ico{
-    width: var(--m-icon) !important;
-    height: var(--m-icon) !important;
-  }
-
-  /* volume slider */
-  .p5-vol-slider{
-    width: var(--m-vol-w) !important;
-    height: var(--m-vol-h) !important;
-    -webkit-appearance:none !important;
-    appearance:none !important;
-    touch-action: pan-x !important;
-  }
-  .p5-vol-slider::-webkit-slider-thumb{
-    -webkit-appearance:none !important;
-    appearance:none !important;
-    width: var(--m-vol-thumb) !important;
-    height: var(--m-vol-thumb) !important;
-    border-radius: 999px !important;
-  }
-
-  /* mid overlay (prev play next) */
-  .p5-music-mid{
-    position: absolute !important;
-    left: 50% !important;
-    top: 50% !important;
-    transform: translate(-50%, -40%) translate(var(--m-mid-x), var(--m-mid-y)) !important;
-    display: flex !important;
-    gap: 10px !important;
-    align-items: center !important;
-    justify-content: center !important;
-    margin: 0 !important;
-    z-index: 5 !important;
-  }
-
-  .p5-playhero{
-    width: var(--m-play) !important;
-    height: var(--m-play) !important;
-    border-radius: 14px !important;
-  }
-  .p5-playhero img{
-    width: var(--m-play-icon) !important;
-    height: var(--m-play-icon) !important;
-  }
-
-  /* bottom */
-  .p5-music-bottom{
-    grid-area: bottom !important;
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 4px !important;
-    margin: 0 !important;
-    align-items: flex-start !important;
-    transform: translate(var(--m-bottom-x), var(--m-bottom-y)) !important;
-  }
-
-  .p5-time-row{
-    font-size: var(--m-time) !important;
-    font-weight: 800 !important;
-    opacity: .9 !important;
-    justify-content: flex-start !important;
-  }
-  #p5Dur::before{
-    content: " / " !important;
-    opacity: .9 !important;
-  }
-
-  .p5-seek{
-    width: var(--m-seek-w) !important;
-    height: var(--m-seek-h) !important;
-    -webkit-appearance:none !important;
-    appearance:none !important;
-    touch-action: pan-x !important;
-  }
-  .p5-seek::-webkit-slider-thumb{
-    -webkit-appearance:none !important;
-    appearance:none !important;
-    width: var(--m-seek-thumb) !important;
-    height: var(--m-seek-thumb) !important;
-    border-radius: 999px !important;
-  }
-}
-
-/* ==========================================================
-   ✅ EDITOR PANEL UI (works on all screens)
-   ========================================================== */
-.p5-layout-panel{
-  position: fixed;
-  left: 10px;
-  bottom: calc(10px + env(safe-area-inset-bottom));
-  z-index: 2147483646;
-  width: min(92vw, 380px);
-  background: rgba(0,0,0,0.78);
-  border: 1px solid rgba(255,255,255,0.16);
-  border-radius: 16px;
-  padding: 12px;
-  display: none;
-  backdrop-filter: blur(8px);
-  color:#fff;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-}
-body.p5-layout-edit .p5-layout-panel{ display:block; }
-  /* Hide editor while intro is active */
-body.intro-active #p5EditorToggle,
-body.intro-active #p5LayoutPanel,
-body.intro-active #p5EditorToggleDesktop,
-body.intro-active #p5LayoutPanelDesktop{
-  display: none !important;
-  pointer-events: none !important;
-}
-  
-  /* ===== Mobile Editor Toggle Button ===== */
-.p5-editor-toggle{
-  position: fixed;
-  left: 12px;
-  bottom: calc(12px + env(safe-area-inset-bottom));
-  z-index: 2147483647;
-  padding: 10px 12px;
-  border-radius: 14px;
-  border: 1px solid rgba(255,255,255,0.18);
-  background: rgba(0,0,0,0.75);
-  color: #fff;
-  font-weight: 900;
-  display: none;
-  -webkit-tap-highlight-color: transparent;
-}
-
-/* default: hidden */
-.p5-editor-toggle{ display:none; }
-
-/* show on ANY touch device */
-@media (pointer: coarse), (hover: none) {
-  .p5-editor-toggle{ display:block; }
-}
-
-/* hide on real desktop mouse */
-@media (hover:hover) and (pointer:fine){
-  .p5-editor-toggle{ display:none; }
-}
-  /* ✅ Mobile: Editor button bottom-center */
-@media (max-width: 820px) and (hover: none) and (pointer: coarse) {
-  .p5-editor-toggle{
-    left: 50% !important;
-    right: auto !important;
-    bottom: calc(24px + env(safe-area-inset-bottom)) !important; /* your -24 request */
-    transform: translateX(-50%) !important;
-    display: block;
-  }
-}
-  /* ==========================================================
-   ✅ DESKTOP HERO MUSIC BAR VARS (SEPARATE FROM MOBILE)
-   Only applies on real desktop (mouse/trackpad)
-   ========================================================== */
-@media (min-width: 821px) and (hover:hover) and (pointer:fine){
-
-  :root{
-    --d-player-width: 760px;
-    --d-player-top: calc(12px + env(safe-area-inset-top));
-
-    --d-frame-h: 105px;
-    --d-cover: 122px;
-    --d-title: 16px;
-    --d-artist: 12px;
-    --d-vol-w: 111px;
-
-    --d-frame-x: 0px;
-    --d-frame-y: 0px;
-
-    --d-cover-x: 0px;
-    --d-cover-y: 0px;
-
-    --d-meta-x: 0px;
-    --d-meta-y: 0px;
-
-    --d-actions-x: 0px;
-    --d-actions-y: -20px;
-
-    --d-mid-x: 250px;
-    --d-mid-y: 0px;
-
-    --d-bottom-x: 0px;
-    --d-bottom-y: -58px;
-  }
-
-  .p5-music-hero{
-    width: min(var(--d-player-width), calc(100% - 18px)) !important;
-    top: var(--d-player-top) !important;
-    transform: translateX(-50%) translate(var(--d-frame-x), var(--d-frame-y)) !important;
-  }
-
-  .p5-music-frame{
-    height: var(--d-frame-h) !important;
-  }
-
-  .p5-cover-wrap{
-    width: var(--d-cover) !important;
-    height: var(--d-cover) !important;
-    transform: translate(var(--d-cover-x), var(--d-cover-y)) !important;
-  }
-
-  .p5-track-title{
-    font-size: var(--d-title) !important;
-    transform: translate(var(--d-meta-x), var(--d-meta-y)) !important;
-  }
-
-  .p5-track-artist{
-    font-size: var(--d-artist) !important;
-    transform: translate(var(--d-meta-x), var(--d-meta-y)) !important;
-  }
-
-  .p5-top-right{
-    transform: translate(var(--d-actions-x), var(--d-actions-y)) !important;
-  }
-
-  .p5-music-mid{
-    transform: translate(-50%, -50%) translate(var(--d-mid-x), var(--d-mid-y)) !important;
-  }
-
-  .p5-music-bottom{
-    transform: translate(var(--d-bottom-x), var(--d-bottom-y)) !important;
-  }
-
-  .p5-vol-slider{
-    width: var(--d-vol-w) !important;
-  }
-}
-
-/* ==========================================================
-   ✅ DESKTOP EDITOR TOGGLE BUTTON
-   ========================================================== */
-.p5-editor-toggle-desktop{
-  position: fixed;
-  right: 12px;
-  bottom: 12px;
-  z-index: 2147483647;
-  padding: 10px 12px;
-  border-radius: 14px;
-  border: 1px solid rgba(255,255,255,0.18);
-  background: rgba(0,0,0,0.75);
-  color: #fff;
-  font-weight: 900;
-  display: none;
-  -webkit-tap-highlight-color: transparent;
-}
-
-@media (hover:hover) and (pointer:fine){
-  .p5-editor-toggle-desktop{ display:block; }
-}
-@media (pointer: coarse), (hover:none){
-  .p5-editor-toggle-desktop{ display:none; }
-}
-
-body.p5-layout-edit-desktop #p5LayoutPanelDesktop{
-  display:block;
-}
-
-
-.p5-layout-panel h3{ margin:0 0 10px; font-size:14px; font-weight:900; }
-.p5-layout-row{
-  display:grid;
-  grid-template-columns: 1fr 74px;
-  gap: 10px;
+/* ══════════════════ CONTACT ══════════════════ */
+.contact{background:var(--denim);padding:80px clamp(16px,5vw,60px) 90px;position:relative;overflow:hidden;min-height:100svh;display:flex;align-items:center;justify-content:center;text-align:center;}
+.contact::before{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(-45deg,transparent,transparent 3px,rgba(255,255,255,0.009) 3px,rgba(255,255,255,0.009) 6px);}
+.contact-top-line{position:absolute;top:0;left:0;right:0;height:4px;background:var(--red)}
+.contact-wrap{
+  max-width:980px;
+  width:100%;
+  position:relative;
+  z-index:1;
+  display:flex;
+  flex-direction:column;
   align-items:center;
-  margin: 8px 0;
+  justify-content:center;
 }
-.p5-layout-row label{ font-size: 12px; opacity:.9; }
-.p5-layout-row input[type="number"]{
-  width: 74px;
-  background: rgba(127,255,212,0.08);
-  border: 1px solid rgba(255,255,255,0.14);
-  color:#fff;
-  border-radius: 10px;
-  padding: 6px 8px;
+.contact-eyebrow{font-family:var(--font-type);font-size:12px;letter-spacing:5px;text-transform:uppercase;color:var(--red);margin-bottom:16px;display:block;}
+.contact-title{font-family:var(--font-stamp);font-size:clamp(52px,7vw,110px);letter-spacing:4px;color:#fff;line-height:0.92;margin-bottom:22px;}
+.contact-note{
+  font-family:var(--font-hand);
+  font-size:clamp(20px,2.2vw,28px);
+  color:rgba(255,255,255,0.58);
+  margin-bottom:34px;
+  max-width:760px;
+  line-height:1.5;
 }
-.p5-layout-actions{ display:flex; gap: 10px; margin-top: 10px; }
-.p5-layout-actions button{
-  flex:1;
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.18);
-  background: rgba(0,201,122,0.35);
-  color:#fff;
-  font-weight: 900;
-  padding: 10px 10px;
+.contact-note em{color:rgba(212,98,26,0.95);font-style:normal;}
+.contact-actions{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  width:fit-content;
+  transform:translateX(-120px);
 }
-.p5-layout-actions button.secondary{ background: rgba(127,255,212,0.08); }
-  
-  /* ✅ Make the editor panel usable on phones */
-.p5-layout-panel{
-  width: min(92vw, 320px);
-  overflow: auto;
-  -webkit-overflow-scrolling: touch;
-  max-height: 70vh;
-  overscroll-behavior: contain;
-}
-/* keep buttons visible while scrolling */
-.p5-layout-actions{
-  position: sticky;
-  bottom: 0;
-  background: rgba(0,0,0,0.85);
-  padding-top: 10px;
-}
-  /* =========================
-   ✅ AE UI STYLES (ADD THIS BELOW your existing .p5-layout-panel styles)
-   ========================= */
-
-.ae-group{
-  border: 1px solid rgba(255,255,255,0.10);
-  border-radius: 14px;
-  overflow: hidden;
-  margin: 10px 0 12px;
-  background: rgba(0,0,0,0.35);
-}
-
-.ae-group-title{
-  padding: 10px 12px;
-  font-weight: 900;
-  font-size: 12px;
-  letter-spacing: .5px;
-  text-transform: uppercase;
-  opacity: .92;
-  background: rgba(255,255,255,0.06);
-  border-bottom: 1px solid rgba(127,255,212,0.08);
-}
-
-.ae-row{
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 10px;
-  align-items: center;
-  padding: 10px 12px;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-}
-.ae-row:last-child{ border-bottom: 0; }
-
-.ae-label{
-  font-size: 12px;
-  font-weight: 800;
-  opacity: .9;
-}
-
-.ae-fields{
+.contact-profile{
   display:flex;
   align-items:center;
-  gap:8px;
+  justify-content:flex-start;
+  gap:18px;
+  margin-bottom:18px;
+  width:fit-content;
+  transform:none;
 }
-
-.ae-fields input{
-  width: 86px;
-  background: rgba(127,255,212,0.08);
-  border: 1px solid rgba(255,255,255,0.14);
-  color:#fff;
-  border-radius: 10px;
-  padding: 6px 8px;
-  font-weight: 900;
-  outline: none;
-}
-
-.ae-unit{
-  font-size: 11px;
-  opacity: .75;
-  font-weight: 900;
-}
-
-/* blocks (collapsible like AE) */
-.ae-block{
-  border-top: 1px solid rgba(127,255,212,0.08);
-  background: rgba(0,0,0,0.20);
-}
-.ae-block:first-child{ border-top:0; }
-
-.ae-summary{
-  list-style:none;
-  cursor:pointer;
-  padding: 10px 12px;
+.pfp-wrap{flex-shrink:0;width:88px;height:88px;border-radius:50%;border:2px solid var(--red);box-shadow:0 0 16px rgba(200,0,26,0.35);overflow:hidden;}
+.pfp-wrap img{width:100%;height:100%;object-fit:cover;display:block;}
+.pfp-name{font-family:var(--font-stamp);font-size:28px;letter-spacing:4px;color:#fff;}
+.pfp-sub{font-family:var(--font-type);font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.40);margin-top:4px;}
+.contact-btns{
   display:flex;
-  align-items:center;
-  gap:10px;
-  user-select:none;
-  font-weight: 900;
-  font-size: 12px;
+  gap:16px;
+  flex-wrap:wrap;
+  justify-content:flex-start;
+  width:fit-content;
+  transform:none;
 }
-.ae-summary::-webkit-details-marker{ display:none; }
-
-.ae-twisty{
-  width: 18px;
-  display:inline-grid;
-  place-items:center;
-  opacity:.85;
-}
-
-details[open] .ae-twisty{ transform: rotate(0deg); }
-details:not([open]) .ae-twisty{ transform: rotate(-90deg); }
-
-.ae-name{
-  opacity:.95;
-}
-
-.ae-xy{
-  padding: 10px 12px 12px;
-  display:grid;
-  gap:10px;
-}
-
-.ae-xy-label{
-  font-size: 12px;
-  opacity: .85;
-  font-weight: 900;
-}
-
-.ae-xy-fields{
-  display:grid;
-  gap:10px;
-}
-
-.ae-field{
-  display:grid;
-  grid-template-columns: 18px 1fr auto;
-  gap: 8px;
+.contact-btn{display:inline-flex;align-items:center;gap:10px;padding:16px 28px;text-decoration:none;font-family:var(--font-type);font-size:12px;letter-spacing:3px;text-transform:uppercase;border:1px solid rgba(255,255,255,0.20);color:rgba(255,255,255,0.72);background:rgba(255,255,255,0.04);clip-path:polygon(6px 0%,100% 0%,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px);transition:transform .18s,border-color .18s,color .18s,background .18s;}
+.contact-btn:hover{transform:translateY(-2px);border-color:var(--red);color:#fff;background:rgba(200,0,26,0.15);}
+.contact-btn img{width:18px;height:18px;}
+.contact-wrap .reveal{width:100%;}
+@media(max-width:720px){
+  .contact{padding:70px 20px 80px;}
+  .contact-actions{
+  transform:none;
   align-items:center;
 }
-
-.ae-axis{
-  font-size: 12px;
-  font-weight: 1000;
-  opacity: .9;
-  text-align:center;
-  color: rgba(255,255,255,0.92);
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.10);
-  border-radius: 8px;
-  padding: 6px 0;
+  .contact-title{font-size:clamp(42px,12vw,72px);}
+  .contact-note{font-size:20px;max-width:95%;}
+  
+  .contact-profile{
+  flex-direction:column;
+  gap:12px;
+  transform:none;
+  justify-content:center;
 }
 
-/* input in XY */
-.ae-field input{
-  width: 100%;
-  background: rgba(127,255,212,0.08);
-  border: 1px solid rgba(255,255,255,0.14);
-  color:#fff;
-  border-radius: 10px;
-  padding: 7px 8px;
-  font-weight: 900;
-  outline:none;
-}
-
-/* keep action buttons consistent */
-.p5-layout-actions{
-  position: sticky;
-  bottom: 0;
-  background: rgba(0,0,0,0.88);
-  padding-top: 10px;
-}
-  
-</style>  </head>  <body oncontextmenu="return false;">  <!-- ✅ BIG P5 HERO MUSIC PLAYER (MOVED TO TOP OF BODY) -->  <div id="p5MusicHero" class="p5-music-hero" data-cursor="normal" aria-live="polite">  
-  <div class="p5-music-frame">  
-    <div class="p5-music-left">  
-      <div class="p5-cover-wrap">  
-        <img id="p5Cover" class="p5-cover" src="cover2.jpg" alt="Cover">
-        <div class="p5-cover-glow" aria-hidden="true"></div>  
-      </div>  
-    </div>  <div class="p5-music-right">  
-  <div class="p5-music-top">  
-    <div class="p5-track-meta">  
-      <div class="p5-track-kicker">Now Playing</div>  
-      <div id="p5TrackTitle" class="p5-track-title">—</div>  
-      <div id="p5TrackArtist" class="p5-track-artist">—</div>  
-    </div>  
-
-    <div class="p5-top-actions p5-top-right">
-
-  <!-- volume on top -->
-  <input id="p5Volume" class="p5-vol-slider" type="range"
-         min="0" max="1" step="0.01" value="0.5"
-         aria-label="Volume">
-
-  <!-- shuffle/loop/mute under volume -->
-  <div class="p5-actions-row">
-    <button id="p5Shuffle" class="p5-mbtn" type="button" aria-label="Shuffle">
-      <img src="shuffle-icon.png" class="p5-ico" alt="">
-    </button>
-
-    <button id="p5Loop" class="p5-mbtn" type="button" aria-label="Loop">
-      <img src="loop-icon.png" class="p5-ico" alt="">
-    </button>
-
-    <button id="p5Mute" class="p5-mbtn p5-vol-btn" type="button" aria-label="Mute/unmute">
-      <img id="p5VolIcon" class="p5-ico" src="volume on.png" alt="">
-    </button>
-  </div>
-
-</div>
-  </div>  
-
-  <div class="p5-music-mid">  
-    <button id="p5Prev" class="p5-mbtn p5-skip" type="button" data-cursor="link" aria-label="Previous">  
-      <img src="prev-icon.png" class="p5-ico" alt="">  
-    </button>  
-
-    <button id="p5Play" class="p5-playhero" type="button" data-cursor="link" aria-label="Play/Pause">  
-      <img id="p5PlayIcon" src="start.png" alt="Play">  
-    </button>  
-
-    <button id="p5Next" class="p5-mbtn p5-skip" type="button" data-cursor="link" aria-label="Next">  
-      <img src="next-icon.png" class="p5-ico" alt="">  
-    </button>  
-  </div>  
-
-  <div class="p5-music-bottom">  
-    <div class="p5-time-row">  
-      <span id="p5Cur" class="p5-time">0:00</span>  
-      <span id="p5Dur" class="p5-time">0:00</span>  
-    </div>  
-
-    <input id="p5Seek" class="p5-seek" type="range" min="0" max="100" value="0" step="0.1"  
-           data-cursor="h-resize" aria-label="Seek">  
-  </div>  
-</div>
-
-  </div>  
-</div>  <!-- GIF CURSOR -->  <div id="gifCursor" class="gif-cursor" aria-hidden="true">  
-  <img id="gifCursorImg" src="NORMAL.gif" alt="">  
-</div>  <!-- INTRO -->  <div id="introOverlay" class="intro">  
-  <video id="introVideo" autoplay playsinline muted preload="auto">  
-    <source src="SUMIRE.webm" type="video/webm">  
-  </video>  
-  <button id="skipIntro" class="intro-skip" type="button" aria-label="Skip intro" data-cursor="link">Skip</button>  
-  <div class="intro-outro" aria-hidden="true"></div>  
-  <!-- SOUND BUTTON -->
-<div id="tapSoundOverlay" class="tap-sound-overlay" aria-hidden="false">
-  <button id="tapSoundBtn" class="tap-sound-btn" type="button" data-cursor="link">Tap to enable sound</button>
- </div>
-</div>
-
-  <section class="hero">  
- <img src="Enkidu1.png" class="character enkidu-left" alt="Enkidu left">
- <img src="Enkidu2.png" class="character enkidu-right" alt="Enkidu right">    <h1 class="title">VALIE</h1>  
-  <p class="subtitle">The Editor That Makes Your Vision Come To Life</p>  
-  <a href="#portfolio" class="button" data-cursor="link">Watch My Work</a>  
-  <a href="#contact" class="button" style="margin-top:16px;background:rgba(0,0,0,0.55);border:1px solid rgba(255,255,255,0.16);box-shadow:0 0 24px rgba(0,201,122,0.18);" data-cursor="link">Contact Me</a>  
-</section>  <section id="portfolio" class="portfolio">  
-  <h2 class="section-title">Portfolio</h2>    <div class="video-grid">  
-    <!-- CARD 1 -->  
-<div class="video-card">    <div class="p5-player" data-cursor="precision">  
-    <video class="p5-video" preload="metadata" playsinline>  
-      <source src="video1.mp4" type="video/mp4">  
-    </video>  <div class="p5-gestures" aria-hidden="true">  
-  <button class="p5-zone p5-left" type="button"></button>  
-  <button class="p5-zone p5-mid" type="button"></button>  
-  <button class="p5-zone p5-right" type="button"></button>  
-</div>  
-
-<div class="p5-hint">+10s</div>  
-
-<button class="p5-bigplay" type="button" aria-label="Play" data-cursor="link">  
-  <img src="start.png" alt="Play">  
-</button>  
-
-<div class="p5-controls" data-cursor="normal">  
-
-  <button class="p5-btn p5-play" type="button" aria-label="Play/Pause" data-cursor="link">  
-    <img src="start.png" class="p5-icon" alt="Play">  
-  </button>  
-
-  <button class="p5-btn p5-back" type="button" aria-label="Back 10 seconds" data-cursor="link">  
-    <img src="fast-backward-icon.png" class="p5-icon" alt="Back 10s">  
-  </button>  
-
-  <div class="p5-time">  
-    <span class="p5-current">0:00</span>  
-  </div>  
-
-  <input class="p5-progress" type="range"  
-         min="0" max="100" value="0" step="0.1"  
-         aria-label="Seek" data-cursor="h-resize">  
-
-  <button class="p5-btn p5-fwd" type="button" aria-label="Forward 10 seconds" data-cursor="link">  
-    <img src="fast-forward-icon.png" class="p5-icon" alt="Forward 10s">  
-  </button>  
-
-  <button class="p5-btn p5-vol-down" type="button" aria-label="Volume down" data-cursor="link">  
-    <img src="minus-line-icon.png" class="p5-icon" alt="Volume -">  
-  </button>  
-
-  <button class="p5-btn p5-mute" type="button" aria-label="Mute" data-cursor="link">  
-    <img src="volume on.png" class="p5-icon p5-mute-icon" alt="Unmuted">  
-  </button>  
-
-  <button class="p5-btn p5-vol-up" type="button" aria-label="Volume up" data-cursor="link">  
-    <img src="plus-icon.png" class="p5-icon" alt="Volume +">  
-  </button>  
-
-  <button class="p5-btn p5-full" type="button" aria-label="Fullscreen" data-cursor="link">  
-    <img src="expand-icon.png" class="p5-icon p5-full-icon" alt="Fullscreen">  
-  </button>  
-
-</div> <!-- CLOSE .p5-controls -->
-
-  </div> <!-- CLOSE .p5-player -->    <div class="video-label">  
-    Edit 1 <span>Persona-style player</span>  
-  </div>  </div> <!-- CLOSE .video-card -->  <!-- CARD 2 -->
-
-   <div class="video-card">    <div class="p5-player" data-cursor="precision">  
-    <video class="p5-video" preload="metadata" playsinline>  
-      <source src="video2.mp4" type="video/mp4">  
-    </video>  <div class="p5-gestures" aria-hidden="true">  
-  <button class="p5-zone p5-left" type="button"></button>  
-  <button class="p5-zone p5-mid" type="button"></button>  
-  <button class="p5-zone p5-right" type="button"></button>  
-</div>  
-
-<div class="p5-hint">+10s</div>  
-
-<button class="p5-bigplay" type="button" aria-label="Play" data-cursor="link">  
-  <img src="start.png" alt="Play">  
-</button>  
-
-<div class="p5-controls" data-cursor="normal">  
-
-  <button class="p5-btn p5-play" type="button" aria-label="Play/Pause" data-cursor="link">  
-    <img src="start.png" class="p5-icon" alt="Play">  
-  </button>  
-
-  <button class="p5-btn p5-back" type="button" aria-label="Back 10 seconds" data-cursor="link">  
-    <img src="fast-backward-icon.png" class="p5-icon" alt="Back 10s">  
-  </button>  
-
-  <div class="p5-time">  
-    <span class="p5-current">0:00</span>  
-  </div>  
-
-  <input class="p5-progress" type="range"  
-         min="0" max="100" value="0" step="0.1"  
-         aria-label="Seek" data-cursor="h-resize">  
-
-  <button class="p5-btn p5-fwd" type="button" aria-label="Forward 10 seconds" data-cursor="link">  
-    <img src="fast-forward-icon.png" class="p5-icon" alt="Forward 10s">  
-  </button>  
-
-  <button class="p5-btn p5-vol-down" type="button" aria-label="Volume down" data-cursor="link">  
-    <img src="minus-line-icon.png" class="p5-icon" alt="Volume -">  
-  </button>  
-
-  <button class="p5-btn p5-mute" type="button" aria-label="Mute" data-cursor="link">  
-    <img src="volume on.png" class="p5-icon p5-mute-icon" alt="Unmuted">  
-  </button>  
-
-  <button class="p5-btn p5-vol-up" type="button" aria-label="Volume up" data-cursor="link">  
-    <img src="plus-icon.png" class="p5-icon" alt="Volume +">  
-  </button>  
-
-  <button class="p5-btn p5-full" type="button" aria-label="Fullscreen" data-cursor="link">  
-    <img src="expand-icon.png" class="p5-icon p5-full-icon" alt="Fullscreen">  
-  </button>  
-
-</div> <!-- CLOSE .p5-controls -->
-
-  </div> <!-- CLOSE .p5-player -->    <div class="video-label">  
-    Edit 2 <span>Persona-style player</span>  
-  </div>  </div> <!-- CLOSE .video-card -->  
-    <!-- CARD 3 -->  
-   <div class="video-card">    <div class="p5-player" data-cursor="precision">  
-    <video class="p5-video" preload="metadata" playsinline>  
-      <source src="video3.mp4" type="video/mp4">  
-    </video>  <div class="p5-gestures" aria-hidden="true">  
-  <button class="p5-zone p5-left" type="button"></button>  
-  <button class="p5-zone p5-mid" type="button"></button>  
-  <button class="p5-zone p5-right" type="button"></button>  
-</div>  
-
-<div class="p5-hint">+10s</div>  
-
-<button class="p5-bigplay" type="button" aria-label="Play" data-cursor="link">  
-  <img src="start.png" alt="Play">  
-</button>  
-
-<div class="p5-controls" data-cursor="normal">  
-
-  <button class="p5-btn p5-play" type="button" aria-label="Play/Pause" data-cursor="link">  
-    <img src="start.png" class="p5-icon" alt="Play">  
-  </button>  
-
-  <button class="p5-btn p5-back" type="button" aria-label="Back 10 seconds" data-cursor="link">  
-    <img src="fast-backward-icon.png" class="p5-icon" alt="Back 10s">  
-  </button>  
-
-  <div class="p5-time">  
-    <span class="p5-current">0:00</span>  
-  </div>  
-
-  <input class="p5-progress" type="range"  
-         min="0" max="100" value="0" step="0.1"  
-         aria-label="Seek" data-cursor="h-resize">  
-
-  <button class="p5-btn p5-fwd" type="button" aria-label="Forward 10 seconds" data-cursor="link">  
-    <img src="fast-forward-icon.png" class="p5-icon" alt="Forward 10s">  
-  </button>  
-
-  <button class="p5-btn p5-vol-down" type="button" aria-label="Volume down" data-cursor="link">  
-    <img src="minus-line-icon.png" class="p5-icon" alt="Volume -">  
-  </button>  
-
-  <button class="p5-btn p5-mute" type="button" aria-label="Mute" data-cursor="link">  
-    <img src="volume on.png" class="p5-icon p5-mute-icon" alt="Unmuted">  
-  </button>  
-
-  <button class="p5-btn p5-vol-up" type="button" aria-label="Volume up" data-cursor="link">  
-    <img src="plus-icon.png" class="p5-icon" alt="Volume +">  
-  </button>  
-
-  <button class="p5-btn p5-full" type="button" aria-label="Fullscreen" data-cursor="link">  
-    <img src="expand-icon.png" class="p5-icon p5-full-icon" alt="Fullscreen">  
-  </button>  
-
-</div> <!-- CLOSE .p5-controls -->
-
-  </div> <!-- CLOSE .p5-player -->    <div class="video-label">  
-    Edit 3 <span>Persona-style player</span>  
-  </div>  </div> <!-- CLOSE .video-card -->  <!-- CARD 4 -->  
-<div class="video-card">
-
-  <div class="p5-player" data-cursor="precision">  
-    <video class="p5-video" preload="metadata" playsinline>  
-      <source src="video4.mp4" type="video/mp4">  
-    </video>  <div class="p5-gestures" aria-hidden="true">  
-  <button class="p5-zone p5-left" type="button"></button>  
-  <button class="p5-zone p5-mid" type="button"></button>  
-  <button class="p5-zone p5-right" type="button"></button>  
-</div>  
-
-<div class="p5-hint">+10s</div>  
-
-<button class="p5-bigplay" type="button" aria-label="Play" data-cursor="link">  
-  <img src="start.png" alt="Play">  
-</button>  
-
-<div class="p5-controls" data-cursor="normal">  
-
-  <button class="p5-btn p5-play" type="button" aria-label="Play/Pause" data-cursor="link">  
-    <img src="start.png" class="p5-icon" alt="Play">  
-  </button>  
-
-  <button class="p5-btn p5-back" type="button" aria-label="Back 10 seconds" data-cursor="link">  
-    <img src="fast-backward-icon.png" class="p5-icon" alt="Back 10s">  
-  </button>  
-
-  <div class="p5-time">  
-    <span class="p5-current">0:00</span>  
-  </div>  
-
-  <input class="p5-progress" type="range"  
-         min="0" max="100" value="0" step="0.1"  
-         aria-label="Seek" data-cursor="h-resize">  
-
-  <button class="p5-btn p5-fwd" type="button" aria-label="Forward 10 seconds" data-cursor="link">  
-    <img src="fast-forward-icon.png" class="p5-icon" alt="Forward 10s">  
-  </button>  
-
-  <button class="p5-btn p5-vol-down" type="button" aria-label="Volume down" data-cursor="link">  
-    <img src="minus-line-icon.png" class="p5-icon" alt="Volume -">  
-  </button>  
-
-  <button class="p5-btn p5-mute" type="button" aria-label="Mute" data-cursor="link">  
-    <img src="volume on.png" class="p5-icon p5-mute-icon" alt="Unmuted">  
-  </button>  
-
-  <button class="p5-btn p5-vol-up" type="button" aria-label="Volume up" data-cursor="link">  
-    <img src="plus-icon.png" class="p5-icon" alt="Volume +">  
-  </button>  
-
-  <button class="p5-btn p5-full" type="button" aria-label="Fullscreen" data-cursor="link">  
-    <img src="expand-icon.png" class="p5-icon p5-full-icon" alt="Fullscreen">  
-  </button>  
-
-</div> <!-- CLOSE .p5-controls -->
-
-  </div> <!-- CLOSE .p5-player -->    <div class="video-label">  
-    Edit 4 <span>Persona-style player</span>  
-  </div>  </div> <!-- CLOSE .video-card -->  </div> <!-- CLOSE .video-grid -->  
-</section> <!-- CLOSE #portfolio -->  <section id="contact" class="contact">  
-  <div class="contact-wrap">  
-    <div class="contact-inner">  
-      <div class="contact-kicker">Business / Commissions</div>  
-      <h2 class="contact-title">Let’s make something insane.</h2>  
-      <p class="contact-sub">Fastest response on Discord. Email is always open for brands, long-term work, and serious inquiries.</p>  <div class="contact-row">  
-    <div class="contact-profile">  
-      <div class="pfp-ring" data-cursor="link" title="Valie">  
-        <img src="Profilepic.jpg" class="pfp-img" alt="Valie Profile">  
-      </div>  
-      <div>  
-        <p class="contact-name">Valie</p>  
-        <p class="contact-note">Discord for quick replies • Email for business</p>  
-      </div>  
-    </div>  
-
-    <div class="contact-actions">  
-      <a class="contact-btn" href="https://discord.com/users/1461961683110072431" target="_blank" rel="noopener" data-cursor="link">  
-        <img class="btn-ico" src="Discord.png" alt="">  
-        Discord  
-      </a>  
-
-      <a class="contact-btn" href="mailto:luvieedits88@gmail.com?subject=Luvie%20Edits%20Inquiry" data-cursor="link">  
-        <img class="btn-ico" src="email.png" alt="">  
-        Email  
-      </a>  
-    </div>  
-  </div>  
-</div>
-
-  </div>  
-</section>  <audio id="bgMusic" preload="auto"></audio>
-
-<footer>© 2026 Valie</footer>  
-  
-      <button id="p5EditorToggle" class="p5-editor-toggle" type="button">
-⚙️ Editor
-</button>
-  <button id="p5EditorToggleDesktop" class="p5-editor-toggle-desktop" type="button">
-🖥 Desktop Editor
-</button>
-  
-<!-- =========================
-     ✅ AE-STYLE MOBILE HERO EDITOR UI (DROP-IN REPLACEMENT)
-     Replace ONLY your <div class="p5-layout-panel"...>...</div> with this.
-     ========================= -->
-
-<div class="p5-layout-panel" id="p5LayoutPanel">
-  <h3>AE Mobile Hero Editor</h3>
-
-  <!-- =========================
-       BASIC SIZES (like AE "Transform > Scale")
-       ========================= -->
-  <div class="ae-group">
-    <div class="ae-group-title">Sizes</div>
-
-    <div class="ae-row">
-      <div class="ae-label">Bar Height</div>
-      <div class="ae-fields">
-        <input data-var="--m-frame-h" type="number" value="60" aria-label="Bar Height">
-        <span class="ae-unit">px</span>
-      </div>
-    </div>
-
-    <div class="ae-row">
-      <div class="ae-label">Cover Size</div>
-      <div class="ae-fields">
-        <input data-var="--m-cover" type="number" value="54" aria-label="Cover Size">
-        <span class="ae-unit">px</span>
-      </div>
-    </div>
-
-    <div class="ae-row">
-      <div class="ae-label">Icon Size</div>
-      <div class="ae-fields">
-        <input data-var="--m-icon" type="number" value="10" aria-label="Icon Size">
-        <span class="ae-unit">px</span>
-      </div>
-    </div>
-
-    <div class="ae-row">
-      <div class="ae-label">Play Button</div>
-      <div class="ae-fields">
-        <input data-var="--m-play" type="number" value="35" aria-label="Play Button Size">
-        <span class="ae-unit">px</span>
-      </div>
-    </div>
-
-    <div class="ae-row">
-      <div class="ae-label">Title</div>
-      <div class="ae-fields">
-        <input data-var="--m-title" type="number" value="11" aria-label="Title Size">
-        <span class="ae-unit">px</span>
-      </div>
-    </div>
-
-    <div class="ae-row">
-      <div class="ae-label">Artist</div>
-      <div class="ae-fields">
-        <input data-var="--m-artist" type="number" value="9" aria-label="Artist Size">
-        <span class="ae-unit">px</span>
-      </div>
-    </div>
-
-    <div class="ae-row">
-      <div class="ae-label">Volume Width</div>
-      <div class="ae-fields">
-        <input data-var="--m-vol-w" type="number" value="88" aria-label="Volume Width">
-        <span class="ae-unit">px</span>
-      </div>
-    </div>
-
-    <div class="ae-row">
-      <div class="ae-label">Seek Width</div>
-      <div class="ae-fields">
-        <input data-var="--m-seek-w" data-unit="%" type="number" value="75" aria-label="Seek Width Percent">
-        <span class="ae-unit">%</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- =========================
-       AE POSITION GROUPS
-       Each block = Position X / Y (like AE Transform > Position)
-       ========================= -->
-
-  <div class="ae-group">
-    <div class="ae-group-title">Position</div>
-
-    <!-- Frame -->
-    <details class="ae-block" open>
-      <summary class="ae-summary">
-        <span class="ae-twisty">▾</span>
-        <span class="ae-name">Frame</span>
-      </summary>
-
-      <div class="ae-xy">
-        <div class="ae-xy-label">Position</div>
-        <div class="ae-xy-fields">
-          <div class="ae-field">
-            <span class="ae-axis">X</span>
-            <input data-var="--m-frame-x" type="number" value="0" aria-label="Frame Position X">
-            <span class="ae-unit">px</span>
-          </div>
-
-          <div class="ae-field">
-            <span class="ae-axis">Y</span>
-            <input data-var="--m-frame-y" type="number" value="0" aria-label="Frame Position Y">
-            <span class="ae-unit">px</span>
-          </div>
-        </div>
-      </div>
-    </details>
-
-    <!-- Cover -->
-    <details class="ae-block">
-      <summary class="ae-summary">
-        <span class="ae-twisty">▾</span>
-        <span class="ae-name">Cover</span>
-      </summary>
-
-      <div class="ae-xy">
-        <div class="ae-xy-label">Position</div>
-        <div class="ae-xy-fields">
-          <div class="ae-field">
-            <span class="ae-axis">X</span>
-            <input data-var="--m-cover-x" type="number" value="0" aria-label="Cover Position X">
-            <span class="ae-unit">px</span>
-          </div>
-
-          <div class="ae-field">
-            <span class="ae-axis">Y</span>
-            <input data-var="--m-cover-y" type="number" value="0" aria-label="Cover Position Y">
-            <span class="ae-unit">px</span>
-          </div>
-        </div>
-      </div>
-    </details>
-
-    <!-- Meta -->
-    <details class="ae-block">
-      <summary class="ae-summary">
-        <span class="ae-twisty">▾</span>
-        <span class="ae-name">Meta (Title/Artist)</span>
-      </summary>
-
-      <div class="ae-xy">
-        <div class="ae-xy-label">Position</div>
-        <div class="ae-xy-fields">
-          <div class="ae-field">
-            <span class="ae-axis">X</span>
-            <input data-var="--m-meta-x" type="number" value="0" aria-label="Meta Position X">
-            <span class="ae-unit">px</span>
-          </div>
-
-          <div class="ae-field">
-            <span class="ae-axis">Y</span>
-            <input data-var="--m-meta-y" type="number" value="0" aria-label="Meta Position Y">
-            <span class="ae-unit">px</span>
-          </div>
-        </div>
-      </div>
-    </details>
-
-    <!-- Actions -->
-    <details class="ae-block">
-      <summary class="ae-summary">
-        <span class="ae-twisty">▾</span>
-        <span class="ae-name">Actions (Shuffle/Loop/Mute/Vol)</span>
-      </summary>
-
-      <div class="ae-xy">
-        <div class="ae-xy-label">Position</div>
-        <div class="ae-xy-fields">
-          <div class="ae-field">
-            <span class="ae-axis">X</span>
-            <input data-var="--m-actions-x" type="number" value="0" aria-label="Actions Position X">
-            <span class="ae-unit">px</span>
-          </div>
-
-          <div class="ae-field">
-            <span class="ae-axis">Y</span>
-            <input data-var="--m-actions-y" type="number" value="0" aria-label="Actions Position Y">
-            <span class="ae-unit">px</span>
-          </div>
-        </div>
-      </div>
-    </details>
-
-    <!-- Mid -->
-    <details class="ae-block">
-      <summary class="ae-summary">
-        <span class="ae-twisty">▾</span>
-        <span class="ae-name">Mid (Prev/Play/Next)</span>
-      </summary>
-
-      <div class="ae-xy">
-        <div class="ae-xy-label">Position</div>
-        <div class="ae-xy-fields">
-          <div class="ae-field">
-            <span class="ae-axis">X</span>
-            <input data-var="--m-mid-x" type="number" value="0" aria-label="Mid Position X">
-            <span class="ae-unit">px</span>
-          </div>
-
-          <div class="ae-field">
-            <span class="ae-axis">Y</span>
-            <input data-var="--m-mid-y" type="number" value="0" aria-label="Mid Position Y">
-            <span class="ae-unit">px</span>
-          </div>
-        </div>
-      </div>
-    </details>
-
-    <!-- Bottom -->
-    <details class="ae-block">
-      <summary class="ae-summary">
-        <span class="ae-twisty">▾</span>
-        <span class="ae-name">Bottom (Time/Seek)</span>
-      </summary>
-
-      <div class="ae-xy">
-        <div class="ae-xy-label">Position</div>
-        <div class="ae-xy-fields">
-          <div class="ae-field">
-            <span class="ae-axis">X</span>
-            <input data-var="--m-bottom-x" type="number" value="0" aria-label="Bottom Position X">
-            <span class="ae-unit">px</span>
-          </div>
-
-          <div class="ae-field">
-            <span class="ae-axis">Y</span>
-            <input data-var="--m-bottom-y" type="number" value="0" aria-label="Bottom Position Y">
-            <span class="ae-unit">px</span>
-          </div>
-        </div>
-      </div>
-    </details>
-  </div>
-
-  <!-- =========================
-       ACTION BUTTONS
-       ========================= -->
-  <div class="p5-layout-actions">
-    <button type="button" id="p5CopyMobileCSS">Copy Permanent CSS</button>
-    <button type="button" class="secondary" id="p5ResetMobileCSS">Reset</button>
-  </div>
-</div>
-
-  <!-- =========================
-     ✅ AE-STYLE DESKTOP HERO EDITOR
-     ========================= -->
-<div class="p5-layout-panel" id="p5LayoutPanelDesktop">
-  <h3>AE Desktop Hero Editor</h3>
-
-  <div class="ae-group">
-    <div class="ae-group-title">Sizes</div>
-
-    <div class="ae-row">
-      <div class="ae-label">Bar Height</div>
-      <div class="ae-fields">
-        <input data-var="--d-frame-h" type="number" value="154" aria-label="Bar Height">
-        <span class="ae-unit">px</span>
-      </div>
-    </div>
-
-    <div class="ae-row">
-      <div class="ae-label">Cover Size</div>
-      <div class="ae-fields">
-        <input data-var="--d-cover" type="number" value="122" aria-label="Cover Size">
-        <span class="ae-unit">px</span>
-      </div>
-    </div>
-
-    <div class="ae-row">
-      <div class="ae-label">Title Size</div>
-      <div class="ae-fields">
-        <input data-var="--d-title" type="number" value="16" aria-label="Title Size">
-        <span class="ae-unit">px</span>
-      </div>
-    </div>
-
-    <div class="ae-row">
-      <div class="ae-label">Artist Size</div>
-      <div class="ae-fields">
-        <input data-var="--d-artist" type="number" value="12" aria-label="Artist Size">
-        <span class="ae-unit">px</span>
-      </div>
-    </div>
-
-    <div class="ae-row">
-      <div class="ae-label">Volume Width</div>
-      <div class="ae-fields">
-        <input data-var="--d-vol-w" type="number" value="150" aria-label="Volume Width">
-        <span class="ae-unit">px</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="ae-group">
-    <div class="ae-group-title">Position</div>
-
-    <details class="ae-block" open>
-      <summary class="ae-summary">
-        <span class="ae-twisty">▾</span>
-        <span class="ae-name">Frame</span>
-      </summary>
-      <div class="ae-xy">
-        <div class="ae-xy-fields">
-          <div class="ae-field">
-            <span class="ae-axis">X</span>
-            <input data-var="--d-frame-x" type="number" value="0" aria-label="Frame X">
-            <span class="ae-unit">px</span>
-          </div>
-          <div class="ae-field">
-            <span class="ae-axis">Y</span>
-            <input data-var="--d-frame-y" type="number" value="0" aria-label="Frame Y">
-            <span class="ae-unit">px</span>
-          </div>
-        </div>
-      </div>
-    </details>
-
-    <details class="ae-block">
-      <summary class="ae-summary">
-        <span class="ae-twisty">▾</span>
-        <span class="ae-name">Cover</span>
-      </summary>
-      <div class="ae-xy">
-        <div class="ae-xy-fields">
-          <div class="ae-field">
-            <span class="ae-axis">X</span>
-            <input data-var="--d-cover-x" type="number" value="0" aria-label="Cover X">
-            <span class="ae-unit">px</span>
-          </div>
-          <div class="ae-field">
-            <span class="ae-axis">Y</span>
-            <input data-var="--d-cover-y" type="number" value="0" aria-label="Cover Y">
-            <span class="ae-unit">px</span>
-          </div>
-        </div>
-      </div>
-    </details>
-
-    <details class="ae-block">
-      <summary class="ae-summary">
-        <span class="ae-twisty">▾</span>
-        <span class="ae-name">Actions</span>
-      </summary>
-      <div class="ae-xy">
-        <div class="ae-xy-fields">
-          <div class="ae-field">
-            <span class="ae-axis">X</span>
-            <input data-var="--d-actions-x" type="number" value="0" aria-label="Actions X">
-            <span class="ae-unit">px</span>
-          </div>
-          <div class="ae-field">
-            <span class="ae-axis">Y</span>
-            <input data-var="--d-actions-y" type="number" value="0" aria-label="Actions Y">
-            <span class="ae-unit">px</span>
-          </div>
-        </div>
-      </div>
-    </details>
-
-    <details class="ae-block">
-      <summary class="ae-summary">
-        <span class="ae-twisty">▾</span>
-        <span class="ae-name">Mid</span>
-      </summary>
-      <div class="ae-xy">
-        <div class="ae-xy-fields">
-          <div class="ae-field">
-            <span class="ae-axis">X</span>
-            <input data-var="--d-mid-x" type="number" value="0" aria-label="Mid X">
-            <span class="ae-unit">px</span>
-          </div>
-          <div class="ae-field">
-            <span class="ae-axis">Y</span>
-            <input data-var="--d-mid-y" type="number" value="0" aria-label="Mid Y">
-            <span class="ae-unit">px</span>
-          </div>
-        </div>
-      </div>
-    </details>
-
-    <details class="ae-block">
-      <summary class="ae-summary">
-        <span class="ae-twisty">▾</span>
-        <span class="ae-name">Bottom</span>
-      </summary>
-      <div class="ae-xy">
-        <div class="ae-xy-fields">
-          <div class="ae-field">
-            <span class="ae-axis">X</span>
-            <input data-var="--d-bottom-x" type="number" value="0" aria-label="Bottom X">
-            <span class="ae-unit">px</span>
-          </div>
-          <div class="ae-field">
-            <span class="ae-axis">Y</span>
-            <input data-var="--d-bottom-y" type="number" value="0" aria-label="Bottom Y">
-            <span class="ae-unit">px</span>
-          </div>
-        </div>
-      </div>
-    </details>
-  </div>
-
-  <div class="p5-layout-actions">
-    <button type="button" id="p5CopyDesktopCSS">Copy Permanent CSS</button>
-    <button type="button" class="secondary" id="p5ResetDesktopCSS">Reset</button>
-  </div>
-</div>
-
-  <script>  
-  // =========================  
-  // GIF CURSOR ENGINE  
-  // =========================  
-  const CURSOR_GIFS = {  
-    normal: "NORMAL.gif",  
-    link: "LINK_SELECT.gif",  
-    text: "TEXT_SELECT.gif",  
-    precision: "PRECISION.gif",  
-    busy: "BUSY.gif",  
-    help: "HELP.gif",  
-    move: "MOVE.gif",  
-    unavailable: "UNAVABIBLE.gif",  
-    handwriting: "HANDWRITING.gif",  
-    alternate: "ALTERNATE_SELECT.gif",  
-    vib: "WIB.gif",  
-    hResize: "H_RESIZE.gif",  
-    vResize: "V_RESIZE.gif",  
-    resize1: "RESIZE_1.gif",  
-    resize2: "RESIZE_2.gif",  
-  };  
-  
-  const gifCursor = document.getElementById("gifCursor");  
-  const gifCursorImg = document.getElementById("gifCursorImg");  
-  const CAN_HOVER = matchMedia("(hover:hover) and (pointer:fine)").matches;  
-  
-  function preloadGifs(){  
-    Object.values(CURSOR_GIFS).forEach(src=>{  
-      const i = new Image();  
-      i.src = src;  
-    });  
-  }  
-  if(CAN_HOVER){  
-    preloadGifs();  
-    gifCursor.style.display = "block";  
-  }  
-  
-  let mouseX = -9999, mouseY = -9999;  
-  let rafOn = false;  
-  let currentCursorKey = "normal";  
-  let forceCursorKey = null;  
-  
-  function setCursor(key){  
-    if(!CAN_HOVER) return;  
-    if(!key) key = "normal";  
-    if(key === currentCursorKey) return;  
-    currentCursorKey = key;  
-    const src = CURSOR_GIFS[key] || CURSOR_GIFS.normal;  
-    if(gifCursorImg.getAttribute("src") !== src){  
-      gifCursorImg.setAttribute("src", src);  
-    }  
-  }  
-  
-  function updateCursorPos(){  
-    rafOn = false;  
-    if(!CAN_HOVER) return;  
-    const ox = parseInt(getComputedStyle(document.documentElement).getPropertyValue("--cursor-offset-x")) || 0;  
-    const oy = parseInt(getComputedStyle(document.documentElement).getPropertyValue("--cursor-offset-y")) || 0;  
-    gifCursor.style.transform = `translate(${mouseX + ox}px, ${mouseY + oy}px)`;  
-  }  
-  
-  document.addEventListener("mousemove", (e)=>{  
-    if(!CAN_HOVER) return;  
-    mouseX = e.clientX;  
-    mouseY = e.clientY;  
-    if(!rafOn){  
-      rafOn = true;  
-      requestAnimationFrame(updateCursorPos);  
-    }  
-  }, {passive:true});  
-  
-  function closestAttr(el, attr){  
-    while(el && el !== document.documentElement){  
-      if(el.hasAttribute && el.hasAttribute(attr)) return el;  
-      el = el.parentNode;  
-    }  
-    return null;  
-  }  
-  
-  function mapCssCursorToGif(cssCursor){  
-    const c = (cssCursor || "").toLowerCase();  
-    if(c.includes("not-allowed") || c.includes("no-drop")) return "unavailable";  
-    if(c.includes("help")) return "help";  
-    if(c.includes("text")) return "text";  
-    if(c.includes("move") || c.includes("grab") || c.includes("grabbing")) return "move";  
-    if(c.includes("crosshair")) return "precision";  
-    if(c.includes("pointer")) return "link";  
-    if(c.includes("ew-resize") || c.includes("col-resize")) return "hResize";  
-    if(c.includes("ns-resize") || c.includes("row-resize")) return "vResize";  
-    if(c.includes("nwse-resize")) return "resize1";  
-    if(c.includes("nesw-resize")) return "resize2";  
-    return "normal";  
-  }  
-  
-  function computeCursorFromTarget(target){  
-    if(!CAN_HOVER) return "normal";  
-    if(forceCursorKey) return forceCursorKey;  
-  
-    const forcedEl = closestAttr(target, "data-cursor");  
-    if(forcedEl){  
-      const val = (forcedEl.getAttribute("data-cursor") || "").trim().toLowerCase();  
-      if(val === "h-resize") return "hResize";  
-      if(val === "v-resize") return "vResize";  
-      if(val === "resize-1") return "resize1";  
-      if(val === "resize-2") return "resize2";  
-      if(CURSOR_GIFS[val]) return val;  
-      if(CURSOR_GIFS[val.replace(/-/g,"")]) return val.replace(/-/g,"");  
-    }  
-  
-    if(target){  
-      const tag = (target.tagName || "").toLowerCase();  
-      if(tag === "a" || tag === "button") return "link";  
-      if(tag === "input"){  
-        const t = (target.getAttribute("type") || "").toLowerCase();  
-        if(["text","email","password","search","url","tel"].includes(t)) return "text";  
-        if(t === "range") return "hResize";  
-      }  
-      if(tag === "textarea") return "text";  
-      if(target.isContentEditable) return "text";  
-    }  
-  
-    const sel = window.getSelection?.();  
-    if(sel && sel.rangeCount && !sel.isCollapsed) return "text";  
-  
-    const cssCursor = target ? getComputedStyle(target).cursor : "";  
-    return mapCssCursorToGif(cssCursor);  
-  }  
-  
-  document.addEventListener("mouseover", (e)=>{ if(CAN_HOVER) setCursor(computeCursorFromTarget(e.target)); }, {passive:true});  
-  document.addEventListener("mousemove", (e)=>{ if(CAN_HOVER) setCursor(computeCursorFromTarget(e.target)); }, {passive:true});  
-  document.addEventListener("mousedown", (e)=>{ if(CAN_HOVER) setCursor(computeCursorFromTarget(e.target)); });  
-  document.addEventListener("mouseup", (e)=>{ if(CAN_HOVER) setCursor(computeCursorFromTarget(e.target)); });  
-  
-  function attachBusyCursorToVideos(){  
-    document.querySelectorAll("video").forEach(v=>{  
-      v.addEventListener("waiting", ()=> { if(CAN_HOVER) setCursor("busy"); });  
-      v.addEventListener("stalled", ()=> { if(CAN_HOVER) setCursor("busy"); });  
-      v.addEventListener("playing", ()=> { if(CAN_HOVER) setCursor("precision"); });  
-      v.addEventListener("pause", ()=> { if(CAN_HOVER) setCursor("precision"); });  
-      v.addEventListener("canplay", ()=> { if(CAN_HOVER) setCursor("precision"); });  
-    });  
-  }  
-  attachBusyCursorToVideos();  
-  
-  // Fullscreen cursor move fix  
-  let gifHomeParent = gifCursor.parentNode;  
-  function getFsEl(){ return document.fullscreenElement || document.webkitFullscreenElement || null; }  
-  function ensureGifCursorInRightPlace(){  
-    if(!CAN_HOVER) return;  
-    const fs = getFsEl();  
-    if(fs){  
-      if(gifCursor.parentNode !== fs) fs.appendChild(gifCursor);  
-    }else{  
-      if(gifCursor.parentNode !== gifHomeParent) gifHomeParent.appendChild(gifCursor);  
-    }  
-    gifCursor.style.display = "block";  
-    gifCursor.style.position = "fixed";  
-    gifCursor.style.zIndex = "2147483647";  
-  }  
-  document.addEventListener("fullscreenchange", ensureGifCursorInRightPlace);  
-  document.addEventListener("webkitfullscreenchange", ensureGifCursorInRightPlace);  
-  
-  // Start at top  
-  try { history.scrollRestoration = "manual"; } catch(e){}  
-  window.addEventListener("load", () => {  
-    if (location.hash) history.replaceState(null, "", location.pathname + location.search);  
-    window.scrollTo(0, 0);  
-  });  
-  window.addEventListener("pageshow", () => window.scrollTo(0,0));  
-  
-  // =========================  
-  // INTRO + AUDIO GATE  
-  // =========================  
-  const introOverlay = document.getElementById("introOverlay");  
-  const introVideo   = document.getElementById("introVideo");  
-  const skipIntroBtn = document.getElementById("skipIntro");  
-  const tapOverlay   = document.getElementById("tapSoundOverlay");  
-  const tapBtn       = document.getElementById("tapSoundBtn");  
-
-  document.body.classList.add("intro-active");
-  
-  tapOverlay.classList.add("show");  
-  document.body.style.overflow = "hidden";  
-  
-  function restartIntroVideo(){  
-    try{  
-      introVideo.pause();  
-      introVideo.currentTime = 0;  
-      introVideo.muted = true;  
-    }catch(e){}  
-  }  
-  introVideo.addEventListener("loadedmetadata", () => {  
-    try{ introVideo.currentTime = 0; }catch(e){}  
-  });  
-    
-  // =========================  
-  // ✅ P5 HERO MUSIC PLAYER LOGIC  
-  // =========================  
-  const music = document.getElementById("bgMusic");  
-
-    function syncHeroIcon(){
-  setPlayIcon(musicUnlocked && !music.paused);
-}
-
-music.addEventListener("play",  syncHeroIcon);
-music.addEventListener("pause", syncHeroIcon);
-music.addEventListener("ended", syncHeroIcon);
-  
-  const TRACKS = [
-  {
-    src: "music1.mp3",
-    title: "Experience",
-    artist: "Ludovico Einaudi",
-    cover: "cover2.jpg"
-  },
-  {
-    src: "music2.mp3",
-    title: "Daydreaming",
-    artist: "Radiohead",
-    cover: "cover1.jpg"
-  },
-  {
-    src: "music3.mp3",
-    title: "Arrival of the Birds",
-    artist: "The Cinematic Orchestra",
-    cover: "cover3.jpg"
-  },
-  {
-    src: "music4.mp3",
-    title: "PROVANT",
-    artist: "SawanoHiroyuki[nZk]",
-    cover: "cover4.jpg"
+  .contact-btns{
+    width:100%;
+    flex-direction:column;
+    align-items:center;
+    transform:none;
+    justify-content:center;
   }
-];
-  
-  const heroPlayer = document.getElementById("p5MusicHero");  
-  const coverImg   = document.getElementById("p5Cover");  
-  const titleEl    = document.getElementById("p5TrackTitle");  
-  const artistEl   = document.getElementById("p5TrackArtist");  
-  
-  const playBtnH   = document.getElementById("p5Play");  
-  const playIcon   = document.getElementById("p5PlayIcon");  
-  const prevBtn    = document.getElementById("p5Prev");  
-  const nextBtn    = document.getElementById("p5Next");  
-  
-  const shuffleBtn = document.getElementById("p5Shuffle");  
-  const loopBtn    = document.getElementById("p5Loop");  
-  
-  const muteBtnH   = document.getElementById("p5Mute");  
-  const volSlider  = document.getElementById("p5Volume");  
-  
-  const seek       = document.getElementById("p5Seek");  
-  const curEl      = document.getElementById("p5Cur");  
-  const durEl      = document.getElementById("p5Dur");  
-  
-  let currentIndex = 0;  
- function applySmartMarquee(el, text){
 
-  // 1️⃣ Set title content
-  el.innerHTML = `<span class="marquee">${text}</span>`;
-  const mq = el.querySelector(".marquee");
+  .contact-btn{
+    width:min(280px,100%);
+    justify-content:center;
+  }
+}
 
-  // 2️⃣ Wait for layout
-  requestAnimationFrame(() => {
+/* ══════════════════ FOOTER ══════════════════ */
+footer{background:var(--ink);padding:22px clamp(16px,4vw,48px);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;border-top:2px solid rgba(200,0,26,0.35);}
+.footer-logo{font-family:var(--font-stamp);font-size:20px;letter-spacing:6px;color:rgba(255,255,255,0.22)}
+.footer-copy{font-family:var(--font-type);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.55)}
 
-    const containerW = el.clientWidth;
-    const textW = mq.scrollWidth;
+/* ══════════════════ SCROLL REVEAL ══════════════════ */
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .72s ease,transform .72s ease}
+.reveal.show{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){
+  .reveal,.video-card,.hero-tag,.hero-name,.hero-sub,.hero-btns,.status-badge,.hero-visual{
+    opacity:1!important;transform:none!important;animation:none!important;transition:none!important}
+  .hero-name-wrap::after{width:65%!important;}
+}
+</style>
+</head>
+<body>
 
-    // 3️⃣ Only animate if text overflows
-    if(textW > containerW + 2){
+<!-- ══════════════════ NAV ══════════════════ -->
+<nav class="nav" id="mainNav">
+  <a href="#" class="nav-logo">VAL<span>IE</span></a>
+  <ul class="nav-links" id="desktopLinks">
+    <li><a href="#about" data-section="about">ABOUT</a></li>
+    <li><a href="#short-form" data-section="short-form">SHORT</a></li>
+    <li><a href="#long-form" data-section="long-form">LONG</a></li>
+    <li><a href="#pricing" data-section="pricing">PRICING</a></li>
+    <li><a href="#contact" data-section="contact">CONTACT</a></li>
+  </ul>
+  <button class="nav-burger" id="navBurger" aria-label="Open menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
 
-      const distance = textW - containerW;
+<!-- Mobile drawer -->
+<div class="nav-drawer" id="navDrawer">
+  <ul>
+    <li><a href="#about"      data-section="about">About</a></li>
+    <li><a href="#short-form" data-section="short-form">Short-Form</a></li>
+    <li><a href="#long-form"  data-section="long-form">Long-Form</a></li>
+    <li><a href="#pricing"    data-section="pricing">Pricing</a></li>
+    <li><a href="#contact"    data-section="contact">Contact</a></li>
+  </ul>
+</div>
 
-      el.style.setProperty("--marquee-distance", distance + "px");
+<!-- ══════════════════ HERO ══════════════════ -->
+<section class="hero" id="hero">
+  <div class="corner c-tl"></div><div class="corner c-tr"></div>
+  <div class="corner c-bl"></div><div class="corner c-br"></div>
+  <div class="hero-left">
+    <div class="hero-tag">Video Editor</div>
+    <div class="hero-name-wrap"><h1 class="hero-name">VALIE</h1></div>
+    <p class="hero-sub">Making your vision <em>come to life</em>.<br>Motion, sync, narrative — whatever it takes.</p>
+    <div class="hero-btns">
+      <a href="#short-form" class="btn-red">&#9654; Watch My Work</a>
+      <a href="#contact" class="btn-outline">Contact Me</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-visual">
+      <div class="hero-reel">
+        <div class="reel-glow"></div><div class="reel-line-v"></div>
+        <div class="reel-line-h"></div><div class="reel-scan"></div>
+        <div class="reel-body"></div><div class="reel-inner"></div>
+        <svg class="reel-spokes-svg" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <line x1="100" y1="72"  x2="100" y2="35"  stroke="rgba(200,0,26,0.45)" stroke-width="1.5"/>
+          <line x1="128" y1="86"  x2="156" y2="68"  stroke="rgba(200,0,26,0.45)" stroke-width="1.5"/>
+          <line x1="128" y1="114" x2="156" y2="132" stroke="rgba(200,0,26,0.45)" stroke-width="1.5"/>
+          <line x1="100" y1="128" x2="100" y2="165" stroke="rgba(200,0,26,0.45)" stroke-width="1.5"/>
+          <line x1="72"  y1="114" x2="44"  y2="132" stroke="rgba(200,0,26,0.45)" stroke-width="1.5"/>
+          <line x1="72"  y1="86"  x2="44"  y2="68"  stroke="rgba(200,0,26,0.45)" stroke-width="1.5"/>
+          <circle cx="100" cy="100" r="95" stroke="rgba(200,0,26,0.55)" stroke-width="1.5" fill="none"/>
+          <circle cx="100" cy="100" r="72" stroke="rgba(200,0,26,0.30)" stroke-width="1" fill="none"/>
+          <circle cx="100" cy="28"  r="9" stroke="rgba(200,0,26,0.70)" stroke-width="1.5" fill="rgba(200,0,26,0.14)"/>
+          <circle cx="162" cy="64"  r="9" stroke="rgba(200,0,26,0.70)" stroke-width="1.5" fill="rgba(200,0,26,0.14)"/>
+          <circle cx="162" cy="136" r="9" stroke="rgba(200,0,26,0.70)" stroke-width="1.5" fill="rgba(200,0,26,0.14)"/>
+          <circle cx="100" cy="172" r="9" stroke="rgba(200,0,26,0.70)" stroke-width="1.5" fill="rgba(200,0,26,0.14)"/>
+          <circle cx="38"  cy="136" r="9" stroke="rgba(200,0,26,0.70)" stroke-width="1.5" fill="rgba(200,0,26,0.14)"/>
+          <circle cx="38"  cy="64"  r="9" stroke="rgba(200,0,26,0.70)" stroke-width="1.5" fill="rgba(200,0,26,0.14)"/>
+        </svg>
+        <div class="reel-hub"><div class="reel-hub-hole"></div></div>
+        <div class="reel-filmstrip-wrap"><div class="reel-filmstrip"></div></div>
+        <div class="reel-stat rs-top-left"><span class="reel-stat-label">Short-form</span><span class="reel-stat-val">SF</span><div class="reel-stat-bar"></div></div>
+        <div class="reel-stat rs-top-right"><span class="reel-stat-label">Long-form</span><span class="reel-stat-val">LF</span><div class="reel-stat-bar"></div></div>
+        <div class="reel-stat rs-bottom"><span class="reel-stat-label">Motion sync</span><span class="reel-stat-val">MS</span><div class="reel-stat-bar"></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="status-badge"><span class="status-dot"></span><span>Available for Work</span></div>
+</section>
 
-      const speed = Math.max(10, Math.min(26, distance / 30));
-      el.style.setProperty("--marquee-speed", speed + "s");
+<!-- ══════════════════ ABOUT ══════════════════ -->
+<section id="about" class="about">
+  <div class="about-bg-letter" aria-hidden="true">VE</div>
+  <div class="about-inner">
 
-      el.classList.add("animate");
+    <div class="about-id reveal">
+      <div class="about-stamp">THE<em>EDITOR</em></div>
+      <div class="about-role-tag">Video Editor · Motion Artist</div>
+      <div class="about-stats">
+        <div class="about-stat">
+          <span class="about-stat-num">7+</span>
+          <span class="about-stat-lbl">Completed edits</span>
+        </div>
+        <div class="about-stat">
+          <span class="about-stat-num">2</span>
+          <span class="about-stat-lbl">Edit styles</span>
+        </div>
+        <div class="about-stat">
+          <span class="about-stat-num">∞</span>
+          <span class="about-stat-lbl">Ideas in the vault</span>
+        </div>
+      </div>
+    </div>
 
-    } else {
+    <div class="about-story reveal">
+      <span class="about-quote-mark" aria-hidden="true">"</span>
 
-      el.classList.remove("animate");
-      el.style.removeProperty("--marquee-distance");
-      el.style.removeProperty("--marquee-speed");
+      <p class="about-p">
+        I'm not just cutting clips together — I'm <em>building a feeling</em>. Every transition, every beat drop, every colour grade is a decision made on purpose. I grew up watching edits that gave me chills and decided that's exactly what I want to make for other people.
+      </p>
 
-    }
+      <div class="about-divider"></div>
 
+      <p class="about-p">
+        I work across <strong>short-form and long-form</strong> — from a 30-second reel that needs to hit hard in the first frame, to a full YouTube video that keeps people watching until the end. The format doesn't matter. The <em>impact</em> does.
+      </p>
+
+      <p class="about-p">
+        My style leans cinematic, intentional, and sync-heavy. But honestly? I adapt. Send me your footage, your vibe, your reference — and I'll figure out how to make it better than you imagined.
+      </p>
+
+      <div class="about-skills">
+        <span class="about-skill">Motion Sync</span>
+        <span class="about-skill">Colour Grading</span>
+        <span class="about-skill">Transitions</span>
+        <span class="about-skill">Sound Design</span>
+        <span class="about-skill">Long-form Pacing</span>
+        <span class="about-skill">Reels &amp; Shorts</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════ SHORT-FORM ══════════════════ -->
+<section id="short-form" class="portfolio">
+  <div class="portfolio-sub">
+    <div class="section-label reveal"><span class="section-eyebrow">Short-Form Work</span></div>
+    <h2 class="section-title reveal">SHORT-FORM</h2>
+    <p class="section-desc reveal">TikTok · Reels · YouTube Shorts · Gaming Clips</p>
+    <div class="video-grid">
+
+      <div class="video-card">
+        <div class="card-pin"></div><div class="card-tape"></div><span class="card-num">SF_01</span>
+        <div class="p5-player">
+          <video class="p5-video" preload="metadata" playsinline webkit-playsinline poster="Velocity Porftolio.jpg"><source src="video1.mp4" type="video/mp4"></video>
+          <div class="p5-gestures"><button class="p5-zone p5-left" type="button"></button><button class="p5-zone p5-mid" type="button"></button><button class="p5-zone p5-right" type="button"></button></div>
+          <div class="p5-hint">+10s</div>
+          <button class="p5-bigplay" type="button" aria-label="Play"><img src="start.png" alt="Play"></button>
+          <div class="p5-controls">
+            <div class="p5-seek-row"><span class="p5-time p5-time-cur">0:00</span><input class="p5-seek p5-progress" type="range" min="0" max="100" value="0" step="0.1" aria-label="Seek"><span class="p5-time p5-time-dur">0:00</span></div>
+            <div class="p5-btn-row"><button class="p5-btn p5-play" type="button"><img src="start.png" class="p5-icon-play" alt="Play"></button><button class="p5-btn p5-back" type="button"><img src="fast-backward-icon.png" class="p5-icon" alt="-10s"></button><button class="p5-btn p5-fwd" type="button"><img src="fast-forward-icon.png" class="p5-icon" alt="+10s"></button><button class="p5-btn p5-mute" type="button"><img src="volume on.png" class="p5-icon p5-mute-icon" alt="Vol"></button><input class="p5-vol-slider" type="range" min="0" max="1" step="0.02" value="0.8" aria-label="Volume"><div class="p5-spacer"></div><button class="p5-btn p5-full" type="button"><img src="expand-icon.png" class="p5-icon p5-full-icon" alt="FS"></button></div>
+          </div>
+        </div>
+        <div class="card-label"><span class="card-hand">motion sync</span><div class="card-title">Velocity Edit</div><div class="card-meta">Motion · Sync</div></div>
+      </div>
+
+      <div class="video-card">
+        <div class="card-pin"></div><div class="card-tape"></div><span class="card-num">SF_02</span>
+        <div class="p5-player">
+          <video class="p5-video" preload="metadata" playsinline webkit-playsinline poster="Dead Space Portfolio.jpg"><source src="video2.mp4" type="video/mp4"></video>
+          <div class="p5-gestures"><button class="p5-zone p5-left" type="button"></button><button class="p5-zone p5-mid" type="button"></button><button class="p5-zone p5-right" type="button"></button></div>
+          <div class="p5-hint">+10s</div>
+          <button class="p5-bigplay" type="button" aria-label="Play"><img src="start.png" alt="Play"></button>
+          <div class="p5-controls">
+            <div class="p5-seek-row"><span class="p5-time p5-time-cur">0:00</span><input class="p5-seek p5-progress" type="range" min="0" max="100" value="0" step="0.1" aria-label="Seek"><span class="p5-time p5-time-dur">0:00</span></div>
+            <div class="p5-btn-row"><button class="p5-btn p5-play" type="button"><img src="start.png" class="p5-icon-play" alt="Play"></button><button class="p5-btn p5-back" type="button"><img src="fast-backward-icon.png" class="p5-icon" alt="-10s"></button><button class="p5-btn p5-fwd" type="button"><img src="fast-forward-icon.png" class="p5-icon" alt="+10s"></button><button class="p5-btn p5-mute" type="button"><img src="volume on.png" class="p5-icon p5-mute-icon" alt="Vol"></button><input class="p5-vol-slider" type="range" min="0" max="1" step="0.02" value="0.8" aria-label="Volume"><div class="p5-spacer"></div><button class="p5-btn p5-full" type="button"><img src="expand-icon.png" class="p5-icon p5-full-icon" alt="FS"></button></div>
+          </div>
+        </div>
+        <div class="card-label"><span class="card-hand">cinematic mood</span><div class="card-title">Music Video Edit</div><div class="card-meta">Cinematic · Mood</div></div>
+      </div>
+
+      <div class="video-card">
+        <div class="card-pin"></div><div class="card-tape"></div><span class="card-num">SF_03</span>
+        <div class="p5-player">
+          <video class="p5-video" preload="metadata" playsinline webkit-playsinline poster="Football Porftolio.jpg"><source src="video3.mp4" type="video/mp4"></video>
+          <div class="p5-gestures"><button class="p5-zone p5-left" type="button"></button><button class="p5-zone p5-mid" type="button"></button><button class="p5-zone p5-right" type="button"></button></div>
+          <div class="p5-hint">+10s</div>
+          <button class="p5-bigplay" type="button" aria-label="Play"><img src="start.png" alt="Play"></button>
+          <div class="p5-controls">
+            <div class="p5-seek-row"><span class="p5-time p5-time-cur">0:00</span><input class="p5-seek p5-progress" type="range" min="0" max="100" value="0" step="0.1" aria-label="Seek"><span class="p5-time p5-time-dur">0:00</span></div>
+            <div class="p5-btn-row"><button class="p5-btn p5-play" type="button"><img src="start.png" class="p5-icon-play" alt="Play"></button><button class="p5-btn p5-back" type="button"><img src="fast-backward-icon.png" class="p5-icon" alt="-10s"></button><button class="p5-btn p5-fwd" type="button"><img src="fast-forward-icon.png" class="p5-icon" alt="+10s"></button><button class="p5-btn p5-mute" type="button"><img src="volume on.png" class="p5-icon p5-mute-icon" alt="Vol"></button><input class="p5-vol-slider" type="range" min="0" max="1" step="0.02" value="0.8" aria-label="Volume"><div class="p5-spacer"></div><button class="p5-btn p5-full" type="button"><img src="expand-icon.png" class="p5-icon p5-full-icon" alt="FS"></button></div>
+          </div>
+        </div>
+        <div class="card-label"><span class="card-hand">sports energy</span><div class="card-title">Football Edit</div><div class="card-meta">Sports · Energy</div></div>
+      </div>
+
+      <div class="video-card">
+        <div class="card-pin"></div><div class="card-tape"></div><span class="card-num">SF_04</span>
+        <div class="p5-player">
+          <video class="p5-video" preload="metadata" playsinline webkit-playsinline poster="waguri1.png"><source src="waguri.mp4" type="video/mp4"></video>
+          <div class="p5-gestures"><button class="p5-zone p5-left" type="button"></button><button class="p5-zone p5-mid" type="button"></button><button class="p5-zone p5-right" type="button"></button></div>
+          <div class="p5-hint">+10s</div>
+          <button class="p5-bigplay" type="button" aria-label="Play"><img src="start.png" alt="Play"></button>
+          <div class="p5-controls">
+            <div class="p5-seek-row"><span class="p5-time p5-time-cur">0:00</span><input class="p5-seek p5-progress" type="range" min="0" max="100" value="0" step="0.1" aria-label="Seek"><span class="p5-time p5-time-dur">0:00</span></div>
+            <div class="p5-btn-row"><button class="p5-btn p5-play" type="button"><img src="start.png" class="p5-icon-play" alt="Play"></button><button class="p5-btn p5-back" type="button"><img src="fast-backward-icon.png" class="p5-icon" alt="-10s"></button><button class="p5-btn p5-fwd" type="button"><img src="fast-forward-icon.png" class="p5-icon" alt="+10s"></button><button class="p5-btn p5-mute" type="button"><img src="volume on.png" class="p5-icon p5-mute-icon" alt="Vol"></button><input class="p5-vol-slider" type="range" min="0" max="1" step="0.02" value="0.8" aria-label="Volume"><div class="p5-spacer"></div><button class="p5-btn p5-full" type="button"><img src="expand-icon.png" class="p5-icon p5-full-icon" alt="FS"></button></div>
+          </div>
+        </div>
+        <div class="card-label"><span class="card-hand">neon glow</span><div class="card-title">Waguri Edit</div><div class="card-meta">Vibrant · Aesthetic</div></div>
+      </div>
+
+      <div class="video-card">
+        <div class="card-pin"></div><div class="card-tape"></div><span class="card-num">SF_05</span>
+        <div class="p5-player">
+          <video class="p5-video" preload="metadata" playsinline webkit-playsinline poster="ketchup portfolio.png"><source src="Ketchup Video.mp4" type="video/mp4"></video>
+          <div class="p5-gestures"><button class="p5-zone p5-left" type="button"></button><button class="p5-zone p5-mid" type="button"></button><button class="p5-zone p5-right" type="button"></button></div>
+          <div class="p5-hint">+10s</div>
+          <button class="p5-bigplay" type="button" aria-label="Play"><img src="start.png" alt="Play"></button>
+          <div class="p5-controls">
+            <div class="p5-seek-row"><span class="p5-time p5-time-cur">0:00</span><input class="p5-seek p5-progress" type="range" min="0" max="100" value="0" step="0.1" aria-label="Seek"><span class="p5-time p5-time-dur">0:00</span></div>
+            <div class="p5-btn-row"><button class="p5-btn p5-play" type="button"><img src="start.png" class="p5-icon-play" alt="Play"></button><button class="p5-btn p5-back" type="button"><img src="fast-backward-icon.png" class="p5-icon" alt="-10s"></button><button class="p5-btn p5-fwd" type="button"><img src="fast-forward-icon.png" class="p5-icon" alt="+10s"></button><button class="p5-btn p5-mute" type="button"><img src="volume on.png" class="p5-icon p5-mute-icon" alt="Vol"></button><input class="p5-vol-slider" type="range" min="0" max="1" step="0.02" value="0.8" aria-label="Volume"><div class="p5-spacer"></div><button class="p5-btn p5-full" type="button"><img src="expand-icon.png" class="p5-icon p5-full-icon" alt="FS"></button></div>
+          </div>
+        </div>
+        <div class="card-label"><span class="card-hand">dynamic gfx</span><div class="card-title">Ketchup Origin</div><div class="card-meta">Fast Facts · Pop</div></div>
+      </div>
+
+      <div class="video-card">
+        <div class="card-pin"></div><div class="card-tape"></div><span class="card-num">SF_06</span>
+        <div class="p5-player">
+          <video class="p5-video" preload="metadata" playsinline webkit-playsinline poster="HARLEY DAVIDSON.png"><source src="Motorcycle Sample.mp4" type="video/mp4"></video>
+          <div class="p5-gestures"><button class="p5-zone p5-left" type="button"></button><button class="p5-zone p5-mid" type="button"></button><button class="p5-zone p5-right" type="button"></button></div>
+          <div class="p5-hint">+10s</div>
+          <button class="p5-bigplay" type="button" aria-label="Play"><img src="start.png" alt="Play"></button>
+          <div class="p5-controls">
+            <div class="p5-seek-row"><span class="p5-time p5-time-cur">0:00</span><input class="p5-seek p5-progress" type="range" min="0" max="100" value="0" step="0.1" aria-label="Seek"><span class="p5-time p5-time-dur">0:00</span></div>
+            <div class="p5-btn-row"><button class="p5-btn p5-play" type="button"><img src="start.png" class="p5-icon-play" alt="Play"></button><button class="p5-btn p5-back" type="button"><img src="fast-backward-icon.png" class="p5-icon" alt="-10s"></button><button class="p5-btn p5-fwd" type="button"><img src="fast-forward-icon.png" class="p5-icon" alt="+10s"></button><button class="p5-btn p5-mute" type="button"><img src="volume on.png" class="p5-icon p5-mute-icon" alt="Vol"></button><input class="p5-vol-slider" type="range" min="0" max="1" step="0.02" value="0.8" aria-label="Volume"><div class="p5-spacer"></div><button class="p5-btn p5-full" type="button"><img src="expand-icon.png" class="p5-icon p5-full-icon" alt="FS"></button></div>
+          </div>
+        </div>
+        <div class="card-label"><span class="card-hand">narrative flow</span><div class="card-title">Harley Legend</div><div class="card-meta">Historical · Grit</div></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- LONG-FORM -->
+  <div id="long-form" class="portfolio-sub">
+    <div class="section-label reveal"><span class="section-eyebrow">Long-Form Work</span></div>
+    <h2 class="section-title reveal">LONG-FORM</h2>
+    <p class="section-desc reveal">YouTube Videos · Commentary · Gameplay · Streams</p>
+    <div class="video-grid video-grid-3">
+
+      <div class="video-card">
+        <div class="card-pin"></div><div class="card-tape card-tape-long"></div><span class="card-num">LF_01</span>
+        <div class="p5-player">
+          <video class="p5-video" preload="metadata" playsinline webkit-playsinline poster="looksmax.png"><source src="looksmax.mp4" type="video/mp4"></video>
+          <div class="p5-gestures"><button class="p5-zone p5-left" type="button"></button><button class="p5-zone p5-mid" type="button"></button><button class="p5-zone p5-right" type="button"></button></div>
+          <div class="p5-hint">+10s</div>
+          <button class="p5-bigplay" type="button" aria-label="Play"><img src="start.png" alt="Play"></button>
+          <div class="p5-controls">
+            <div class="p5-seek-row"><span class="p5-time p5-time-cur">0:00</span><input class="p5-seek p5-progress" type="range" min="0" max="100" value="0" step="0.1" aria-label="Seek"><span class="p5-time p5-time-dur">0:00</span></div>
+            <div class="p5-btn-row"><button class="p5-btn p5-play" type="button"><img src="start.png" class="p5-icon-play" alt="Play"></button><button class="p5-btn p5-back" type="button"><img src="fast-backward-icon.png" class="p5-icon" alt="-10s"></button><button class="p5-btn p5-fwd" type="button"><img src="fast-forward-icon.png" class="p5-icon" alt="+10s"></button><button class="p5-btn p5-mute" type="button"><img src="volume on.png" class="p5-icon p5-mute-icon" alt="Vol"></button><input class="p5-vol-slider" type="range" min="0" max="1" step="0.02" value="0.8" aria-label="Volume"><div class="p5-spacer"></div><button class="p5-btn p5-full" type="button"><img src="expand-icon.png" class="p5-icon p5-full-icon" alt="FS"></button></div>
+          </div>
+        </div>
+        <div class="card-label card-label-long"><span class="card-hand">clean motion</span><div class="card-title">Aesthetic Blueprint</div><div class="card-meta">Minimal · Technical</div></div>
+      </div>
+
+      <div class="video-card">
+        <div class="card-pin"></div><div class="card-tape card-tape-long"></div><span class="card-num">LF_02</span>
+        <div class="p5-player">
+          <video class="p5-video" preload="metadata" playsinline webkit-playsinline poster="mk1.png"><source src="Mk Sample.mp4" type="video/mp4"></video>
+          <div class="p5-gestures"><button class="p5-zone p5-left" type="button"></button><button class="p5-zone p5-mid" type="button"></button><button class="p5-zone p5-right" type="button"></button></div>
+          <div class="p5-hint">+10s</div>
+          <button class="p5-bigplay" type="button" aria-label="Play"><img src="start.png" alt="Play"></button>
+          <div class="p5-controls">
+            <div class="p5-seek-row"><span class="p5-time p5-time-cur">0:00</span><input class="p5-seek p5-progress" type="range" min="0" max="100" value="0" step="0.1" aria-label="Seek"><span class="p5-time p5-time-dur">0:00</span></div>
+            <div class="p5-btn-row"><button class="p5-btn p5-play" type="button"><img src="start.png" class="p5-icon-play" alt="Play"></button><button class="p5-btn p5-back" type="button"><img src="fast-backward-icon.png" class="p5-icon" alt="-10s"></button><button class="p5-btn p5-fwd" type="button"><img src="fast-forward-icon.png" class="p5-icon" alt="+10s"></button><button class="p5-btn p5-mute" type="button"><img src="volume on.png" class="p5-icon p5-mute-icon" alt="Vol"></button><input class="p5-vol-slider" type="range" min="0" max="1" step="0.02" value="0.8" aria-label="Volume"><div class="p5-spacer"></div><button class="p5-btn p5-full" type="button"><img src="expand-icon.png" class="p5-icon p5-full-icon" alt="FS"></button></div>
+          </div>
+        </div>
+        <div class="card-label card-label-long"><span class="card-hand">dynamic UI</span><div class="card-title">Roster Breakdown</div><div class="card-meta">Gaming · Narrative</div></div>
+      </div>
+
+      <div class="video-card">
+        <div class="card-pin"></div><div class="card-tape card-tape-long"></div><span class="card-num">LF_03</span>
+        <div class="p5-player">
+          <video class="p5-video" preload="metadata" playsinline webkit-playsinline poster="persona portfolio.jpg"><source src="video4.mp4" type="video/mp4"></video>
+          <div class="p5-gestures"><button class="p5-zone p5-left" type="button"></button><button class="p5-zone p5-mid" type="button"></button><button class="p5-zone p5-right" type="button"></button></div>
+          <div class="p5-hint">+10s</div>
+          <button class="p5-bigplay" type="button" aria-label="Play"><img src="start.png" alt="Play"></button>
+          <div class="p5-controls">
+            <div class="p5-seek-row"><span class="p5-time p5-time-cur">0:00</span><input class="p5-seek p5-progress" type="range" min="0" max="100" value="0" step="0.1" aria-label="Seek"><span class="p5-time p5-time-dur">0:00</span></div>
+            <div class="p5-btn-row"><button class="p5-btn p5-play" type="button"><img src="start.png" class="p5-icon-play" alt="Play"></button><button class="p5-btn p5-back" type="button"><img src="fast-backward-icon.png" class="p5-icon" alt="-10s"></button><button class="p5-btn p5-fwd" type="button"><img src="fast-forward-icon.png" class="p5-icon" alt="+10s"></button><button class="p5-btn p5-mute" type="button"><img src="volume on.png" class="p5-icon p5-mute-icon" alt="Vol"></button><input class="p5-vol-slider" type="range" min="0" max="1" step="0.02" value="0.8" aria-label="Volume"><div class="p5-spacer"></div><button class="p5-btn p5-full" type="button"><img src="expand-icon.png" class="p5-icon p5-full-icon" alt="FS"></button></div>
+          </div>
+        </div>
+        <div class="card-label card-label-long"><span class="card-hand">fast cuts</span><div class="card-title">Rebellion vs Acceptance</div><div class="card-meta">Kinetic · Stylized</div></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ PRICING ══════════════════ -->
+<section id="pricing" class="pricing">
+  <div class="pricing-top-line"></div>
+  <div class="pricing-label reveal"><span class="pricing-eyebrow">// Rates &amp; Packages</span></div>
+  <h2 class="pricing-title reveal">PRICING</h2>
+  <p class="pricing-sub reveal">Base starting prices for each format. <strong>Prices are negotiable</strong> depending on complexity, editing style, amount of footage, and turnaround time.</p>
+  <div class="pricing-cards reveal">
+    <div class="price-card">
+      <span class="price-badge">Short-form</span>
+      <div class="price-amount">$25</div>
+      <span class="price-starting">Starting price</span>
+      <p class="price-desc">TikToks, Reels, YouTube Shorts, gaming clips, and fast-paced social media edits.</p>
+      <span class="price-note">Negotiable depending on the project.</span>
+    </div>
+    <div class="price-card">
+      <span class="price-badge price-badge-long">Long-form</span>
+      <div class="price-amount">$70</div>
+      <span class="price-starting">Starting price</span>
+      <p class="price-desc">YouTube videos, commentary, gameplay videos, streams, and polished horizontal content.</p>
+      <span class="price-note">Negotiable depending on the project.</span>
+    </div>
+  </div>
+  <p class="pricing-footnote reveal"><strong>Important:</strong> These are base prices only — <strong>everything can be negotiated</strong> based on video length, style, effects, subtitles, and delivery speed.</p>
+</section>
+
+<!-- ══════════════════ CONTACT ══════════════════ -->
+<section id="contact" class="contact">
+  <div class="contact-top-line"></div>
+  <div class="contact-wrap">
+    <span class="contact-eyebrow reveal">// Business &amp; Commissions</span>
+    <h2 class="contact-title reveal">LET'S MAKE<br>SOMETHING INSANE</h2>
+    <p class="contact-note reveal">Fastest response on <em>Discord</em>. Email open for brands, long-term work, and serious inquiries.</p>
+    <div class="contact-actions reveal">
+  <div class="contact-profile">
+    <div class="pfp-wrap"><img src="Profilepic.jpg" alt="Valie"></div>
+    <div>
+      <div class="pfp-name">VALIE</div>
+      <div class="pfp-sub">Discord · Email</div>
+    </div>
+  </div>
+
+  <div class="contact-btns">
+    <a class="contact-btn" href="https://discord.com/users/1461961683110072431" target="_blank" rel="noopener"><img src="Discord.png" alt=""> Discord</a>
+    <a class="contact-btn" href="mailto:vaileedits920@gmail.com?subject=Valie%20Edits%20Inquiry"><img src="email.png" alt=""> Email</a>
+  </div>
+</div>
+  </div>
+</section>
+
+<footer>
+  <span class="footer-logo">VALIE</span>
+  <span class="footer-copy">© 2026 — All Rights Reserved</span>
+</footer>
+
+<script>
+/* ══ HAMBURGER MENU ══ */
+const burger=document.getElementById("navBurger");
+const drawer=document.getElementById("navDrawer");
+burger.addEventListener("click",()=>{
+  const open=drawer.classList.toggle("open");
+  burger.classList.toggle("open",open);
+  burger.setAttribute("aria-expanded",open);
+});
+// Close drawer when a link is clicked
+drawer.querySelectorAll("a").forEach(a=>a.addEventListener("click",()=>{
+  drawer.classList.remove("open");
+  burger.classList.remove("open");
+  burger.setAttribute("aria-expanded","false");
+}));
+// Close on outside click
+document.addEventListener("click",e=>{
+  if(!drawer.contains(e.target)&&!burger.contains(e.target)){
+    drawer.classList.remove("open");
+    burger.classList.remove("open");
+    burger.setAttribute("aria-expanded","false");
+  }
+});
+
+/* ══ ACTIVE NAV HIGHLIGHT ══ */
+const sections=["hero","about","short-form","long-form","pricing","contact"];
+// Map long-form to short-form in the nav since they share a section
+const navMap={"long-form":"long-form","short-form":"short-form"};
+function setActive(id){
+  const allLinks=document.querySelectorAll("[data-section]");
+  allLinks.forEach(a=>{
+    const s=a.getAttribute("data-section");
+    a.classList.toggle("active",s===id);
   });
 }
-  let shuffleOn = false;  
-  let loopMode = "off"; // "off" | "all" | "one"  
-  
-  let musicUnlocked = false;  
-  let userWantsMusic = false;  
-  
-  music.preload = "auto";  
-  music.volume = Number(volSlider.value);  
-  music.muted = false;  
-  
-  function fmtTime(s){  
-    if(!isFinite(s)) return "0:00";  
-    const m = Math.floor(s/60);  
-    const sec = Math.floor(s%60).toString().padStart(2,"0");  
-    return `${m}:${sec}`;  
-  }  
-  
-  function setPlayIcon(playing){  
-    playIcon.src = playing ? "pause.png" : "start.png";  
-    playIcon.alt = playing ? "Pause" : "Play";  
-  }  
-  
-function setMuteIcon(){  
-  const muted = music.muted || music.volume === 0;  
-  const img = document.getElementById("p5VolIcon");  
-  if(img) img.src = muted ? "volume muted.png" : "volume on.png";  
-}  
-  
-  function setShuffleUI(){  
-    shuffleBtn.classList.toggle("active", shuffleOn);  
-  }  
-  
-  function setLoopUI(){  
-  loopBtn.classList.toggle("active", loopMode !== "off");  
-  const img = loopBtn.querySelector("img");  
-  img.src = loopMode === "one"  
-    ? "loop-replay-1-icon.png"  
-    : "loop-icon.png";  
-    loopBtn.setAttribute(  
-      "aria-label",  
-      loopMode === "off" ? "Loop off" : (loopMode === "all" ? "Loop all" : "Loop one")  
-    );  
-  }  
-  
-  function applySeekFill(percent){  
-    const p = Math.max(0, Math.min(100, percent));  
-    seek.style.background =  
-      `linear-gradient(to right, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.95) ${p}%, rgba(0,201,122,0.22) ${p}%, rgba(0,201,122,0.22) 100%)`;  
-  }  
-  
-  function showHero(){  
-    heroPlayer.classList.add("show");  
-    heroPlayer.classList.remove("hide");  
-  }  
-  
-  function hideHero(){  
-    heroPlayer.classList.add("hide");  
-    heroPlayer.classList.remove("show");  
-  }  
-  
-  function setTrack(i){
+const secEls=sections.map(id=>document.getElementById(id)).filter(Boolean);
+const navObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)setActive(e.target.id);});
+},{threshold:0.25,rootMargin:"-54px 0px -35% 0px"});
+secEls.forEach(el=>navObs.observe(el));
 
-  currentIndex = (i + TRACKS.length) % TRACKS.length;
-  const t = TRACKS[currentIndex];
-
-  music.src = t.src;
-
-  // ✅ Apply smart marquee correctly
-  applySmartMarquee(titleEl, t.title || t.src);
-
-  if(artistEl) artistEl.textContent = t.artist || "";
-  coverImg.src = t.cover;
-
-  seek.value = 0;
-  applySeekFill(0);
-  curEl.textContent = "0:00";
-  durEl.textContent = "0:00";
-}
-  
-  function pickNextIndex(){  
-    if(shuffleOn && TRACKS.length > 1){  
-      let n = currentIndex;  
-      while(n === currentIndex) n = Math.floor(Math.random() * TRACKS.length);  
-      return n;  
-    }  
-    return currentIndex + 1;  
-  }  
-  
-  function pickPrevIndex(){  
-    if(shuffleOn && TRACKS.length > 1){  
-      let n = currentIndex;  
-      while(n === currentIndex) n = Math.floor(Math.random() * TRACKS.length);  
-      return n;  
-    }  
-    return currentIndex - 1;  
-  }  
-  
-  async function unlockAudioFromGesture(){  
-    if(musicUnlocked) return true;  
-    try{  
-      if(!music.src) setTrack(0);  
-      await music.play();  
-      music.pause();  
-      music.currentTime = 0;  
-      musicUnlocked = true;  
-      setMuteIcon();  
-      return true;  
-    }catch(e){  
-      return false;  
-    }  
-  }  
-  
-  async function safePlay(){
-  if(!musicUnlocked){
-    const ok = await unlockAudioFromGesture();
-    if(!ok) return false;
+/* ══ SCROLL REVEAL ══ */
+const rEls=document.querySelectorAll(".reveal");
+const rObs=new IntersectionObserver(entries=>entries.forEach(e=>{
+  if(e.isIntersecting){e.target.classList.add("show");rObs.unobserve(e.target);}
+}),{threshold:.10,rootMargin:"0px 0px -28px 0px"});
+rEls.forEach(el=>rObs.observe(el));
+const vCards=document.querySelectorAll(".video-card");
+const cObs=new IntersectionObserver(entries=>entries.forEach(e=>{
+  if(e.isIntersecting){
+    vCards.forEach((c,i)=>{if(c===e.target)setTimeout(()=>c.classList.add("show"),i*100);});
+    cObs.unobserve(e.target);
   }
+}),{threshold:.08});
+vCards.forEach(c=>cObs.observe(c));
 
-  try{
-    await music.play();
-    setPlayIcon(true);
-    setMuteIcon();
-    showHero();                 // ✅ always keep bar visible
-    return true;
-  }catch(e){
-    console.warn("safePlay failed:", e);
-
-    setPlayIcon(false);
-    setMuteIcon();
-
-    showHero();                 // ✅ DO NOT hide bar anymore
-
-    // If browser blocked playback, allow user to unlock again
-    if(!musicUnlocked && tapOverlay){
-      tapOverlay.classList.add("show");
-    }
-
-    return false;
-  }
-}
-  
- function safePause(){  
-  music.pause();  
-  setPlayIcon(false);  
-  // ✅ DO NOT hide the bar when paused  
-  showHero();  
-}  
-  
-  // ✅ Hook tap button to unlock + start music  
-  async function enableSoundAndStartMusic(){  
-    const ok = await unlockAudioFromGesture();  
-    if(!ok) return;  
-  
-    userWantsMusic = true;  
-    if(!music.src) setTrack(currentIndex);  
-  
-    music.muted = false;  
-    const played = await safePlay();
-    syncHeroIcon();
-    if(played){
-      tapOverlay.classList.remove("show");  
-    }  
-  }  
-  
-  tapBtn.addEventListener("click", enableSoundAndStartMusic);  
-  tapBtn.addEventListener("touchend", (e)=>{  
-    e.preventDefault();  
-    enableSoundAndStartMusic();  
-  }, {passive:false});  
-  
-  // Buttons  
-  playBtnH.addEventListener("click", async ()=>{  
-    if(!musicUnlocked){  
-      tapOverlay.classList.add("show");  
-      userWantsMusic = false;  
-      setPlayIcon(false);  
-      return;  
-    }  
-    userWantsMusic = true;  
-  
-    if(music.paused){  
-      if(!music.src) setTrack(currentIndex);  
-      await safePlay();  
-    }else{  
-      safePause();  
-    }  
-  });  
-  
-  prevBtn.addEventListener("click", async ()=>{  
-    if(!musicUnlocked){  
-      tapOverlay.classList.add("show");  
-      return;  
-    }  
-    userWantsMusic = true;  
-    setTrack(pickPrevIndex());  
-    await safePlay();  
-  });  
-  
-  nextBtn.addEventListener("click", async ()=>{  
-    if(!musicUnlocked){  
-      tapOverlay.classList.add("show");  
-      return;  
-    }  
-    userWantsMusic = true;  
-    setTrack(pickNextIndex());  
-    await safePlay();  
-  });  
-  
-  shuffleBtn.addEventListener("click", ()=>{  
-    shuffleOn = !shuffleOn;  
-    setShuffleUI();  
-  });  
-  
-  loopBtn.addEventListener("click", ()=>{  
-    loopMode = (loopMode === "off") ? "all" : (loopMode === "all" ? "one" : "off");  
-    setLoopUI();  
-  });  
-  
-  muteBtnH.addEventListener("click", async ()=>{  
-    if(!musicUnlocked){  
-      tapOverlay.classList.add("show");  
-      return;  
-    }  
-    music.muted = !music.muted;  
-    setMuteIcon();  
-  });  
-  
-  // ✅ Inline volume only (no popup)  
-volSlider.addEventListener("input", ()=>{  
-  music.volume = Number(volSlider.value);  
-  music.muted = (music.volume === 0);  
-  setMuteIcon();  
-});  
-  
-  // Seek/progress  
-  seek.addEventListener("input", ()=>{  
-    if(!music.duration) return;  
-    const pct = Number(seek.value);  
-    applySeekFill(pct);  
-    music.currentTime = (pct/100) * music.duration;  
-  });  
-  
-  music.addEventListener("loadedmetadata", ()=>{  
-    durEl.textContent = fmtTime(music.duration);  
-  });  
-  
-  music.addEventListener("timeupdate", ()=>{  
-    curEl.textContent = fmtTime(music.currentTime);  
-    if(music.duration){  
-      const pct = (music.currentTime / music.duration) * 100;  
-      seek.value = pct;  
-      applySeekFill(pct);  
-    }  
-  });  
-  
-  // Ended logic (shuffle + loop) ✅ FIXED: always go to next track
-music.addEventListener("ended", async () => {
-
-  // Loop one = replay the same track
-  if(loopMode === "one"){
-    music.currentTime = 0;
-    if(userWantsMusic) await safePlay();
-    return;
-  }
-
-  // Otherwise always advance (shuffle respected)
-  setTrack(pickNextIndex());
-  if(userWantsMusic) await safePlay();
-}); 
-  
-  // ✅ Default UI  
-  // ✅ random starting track every refresh (shuffle OFF)  
-  let roll = Math.random();
-
-if (roll < 0.01) {
-  setTrack(3); // 1% rare song
-} else {
-  setTrack(Math.floor(Math.random() * 3)); // pick from the first 3 normally
-}
-  setPlayIcon(false);  
-  setMuteIcon();  
-  setShuffleUI();  
-  setLoopUI();  
-  applySeekFill(0);  
-    
-  
-  
-    
-  // =========================  
-  // INTRO END / SKIP  
-  // =========================  
-  let introHiding = false;  
-  function hideIntro(){  
-    if(introHiding) return;  
-    introHiding = true;  
-  
-    try{ introVideo.pause(); }catch(e){}  
-    introOverlay.classList.add("outro");  
-  
-    setTimeout(()=>{  
-      introOverlay.classList.add("hide");  
-      tapOverlay.classList.add("hide");  
-      tapOverlay.classList.remove("show");  
-  
-      heroPlayer.classList.add("show");  
-      heroPlayer.classList.remove("hide");  
-  
-      setTimeout(()=>{  
-        introOverlay.style.display="none";  
-        if(tapOverlay && tapOverlay.parentNode) tapOverlay.remove();  
-      }, 560);  
-    }, 820);  
-  
-    document.body.style.overflow = "";  
-  
-    showHero();  
-  
-    // ✅ Fix: make sure play icon doesn't look "stuck"  
-    setPlayIcon(musicUnlocked && !music.paused);
-
-    document.body.classList.remove("intro-active");
-  }  
-  introVideo.addEventListener("ended", hideIntro);  
-  skipIntroBtn.addEventListener("click", async () => { await unlockAudioFromGesture(); hideIntro(); });  
-  
-  window.addEventListener("load", () => {  
-    restartIntroVideo();  
-    introVideo.play().catch(()=>{});  
-    ensureGifCursorInRightPlace();  
-  });  
-    // If intro overlay is gone but body class stuck, clean it up
-window.addEventListener("load", () => {
-  setTimeout(() => {
-    const intro = document.getElementById("introOverlay");
-    if(!intro || intro.classList.contains("hide") || intro.style.display === "none"){
-      document.body.classList.remove("intro-active");
-    }
-  }, 1200);
-});
-  
-  // =========================  
-  // VIDEO PLAYER CONTROLS (same as before)  
-  // =========================  
-  function isTouchDevice(){ return ("ontouchstart" in window) || (navigator.maxTouchPoints > 0); }  
-  
-  function showHint(player, text){  
-    const hint = player.querySelector(".p5-hint");  
-    if(!hint) return;  
-    hint.textContent = text;  
-    hint.classList.add("show");  
-    clearTimeout(hint._t);  
-    hint._t = setTimeout(()=> hint.classList.remove("show"), 450);  
-  }  
-  
-  let activePlayer = null;  
-  let activeVideo = null;  
-  
-  function setActive(player){  
-    activePlayer = player;  
-    activeVideo = player ? player.querySelector(".p5-video") : null;  
-  }  
-  
-  function exitFs(){  
-    if(document.exitFullscreen) return document.exitFullscreen();  
-    if(document.webkitExitFullscreen) return document.webkitExitFullscreen();  
-  }  
-  
-  let isPointerInsidePlayer = false;  
-  let hoveredPlayer = null;  
-  
-  document.querySelectorAll(".p5-player").forEach(player=>{  
-    const video = player.querySelector(".p5-video");  
-    const bigPlay = player.querySelector(".p5-bigplay");  
-    const playBtn = player.querySelector(".p5-play");  
-    const muteBtnV = player.querySelector(".p5-mute");  
-    const fullBtn = player.querySelector(".p5-full");  
-    const prog = player.querySelector(".p5-progress");  
-    const cur = player.querySelector(".p5-current");  
-  
-    const backBtn = player.querySelector(".p5-back");  
-    const fwdBtn  = player.querySelector(".p5-fwd");  
-    const volUp   = player.querySelector(".p5-vol-up");  
-    const volDown = player.querySelector(".p5-vol-down");  
-  
-    const gestures = player.querySelector(".p5-gestures");  
-    const left = player.querySelector(".p5-left");  
-    const mid = player.querySelector(".p5-mid");  
-    const right = player.querySelector(".p5-right");  
-  
-    video.volume = 0.8;  
-    video.muted = false;  
-  
-    player.addEventListener("mouseenter", () => {  
-      isPointerInsidePlayer = true;  
-      hoveredPlayer = player;  
-      setActive(player);  
-      if(CAN_HOVER) setCursor("precision");  
-    });  
-    player.addEventListener("mouseleave", () => {  
-      if(hoveredPlayer === player){  
-        isPointerInsidePlayer = false;  
-        hoveredPlayer = null;  
-        if(CAN_HOVER) setCursor("normal");  
-      }  
-    });  
-  
-    async function ensureUnlocked(){  
-      if(!musicUnlocked) await unlockAudioFromGesture();  
-    }  
-  
-   function setMuteIconV(){  
-  const icon = muteBtnV.querySelector(".p5-mute-icon");  
-  if(!icon) return;  
-  
-  const muted = video.muted || video.volume === 0;  
-  icon.src = muted ? "volume muted.png" : "volume on.png";  
-  icon.alt = muted ? "Muted" : "Unmuted";  
-}  
-  
-    function setPlayUI(){  
-      const playing = !video.paused && !video.ended;  
-      bigPlay.style.display = playing ? "none" : "grid";  
-      playBtn.innerHTML = playing  
-        ? '<img src="pause.png" class="p5-icon" alt="Pause">'  
-        : '<img src="start.png" class="p5-icon" alt="Play">';  
-    }  
-  
-    function clamp01(x){ return Math.min(1, Math.max(0, x)); }  
-    function bumpVolume(delta){  
-      setActive(player);  
-      video.muted = false;  
-      video.volume = clamp01((video.volume ?? 0.8) + delta);  
-      setMuteIconV();  
-      showHint(player, `Vol ${Math.round(video.volume * 100)}%`);  
-    }  
-  
-    async function togglePlayerFullscreen(){  
-      setActive(player);  
-      const fsEl = getFsEl();  
-      if(fsEl){ await exitFs(); return; }  
-      try{  
-        if(player.requestFullscreen) await player.requestFullscreen();  
-        else if(player.webkitRequestFullscreen) await player.webkitRequestFullscreen();  
-        else if(video.requestFullscreen) await video.requestFullscreen();  
-      }catch(e){}  
-      setTimeout(ensureGifCursorInRightPlace, 50);  
-    }  
-  
-    player.addEventListener("pointerdown", ()=> setActive(player));  
-    bigPlay.addEventListener("click", async ()=> { setActive(player); await ensureUnlocked(); video.play(); });  
-    playBtn.addEventListener("click", async ()=> { setActive(player); await ensureUnlocked(); video.paused ? video.play() : video.pause(); });  
-  
-    video.addEventListener("timeupdate", ()=>{  
-      cur.textContent = fmtTime(video.currentTime);  
-      if(video.duration) prog.value = (video.currentTime / video.duration) * 100;  
-    });  
-  
-    prog.addEventListener("input", ()=>{  
-      if(video.duration) video.currentTime = (Number(prog.value)/100) * video.duration;  
-    });  
-  
-    backBtn?.addEventListener("click", ()=>{  
-      setActive(player);  
-      video.currentTime = Math.max(0, video.currentTime - 10);  
-      showHint(player, "⏪ -10s");  
-    });  
-  
-    fwdBtn?.addEventListener("click", ()=>{  
-      setActive(player);  
-      video.currentTime = Math.min(video.duration || Infinity, video.currentTime + 10);  
-      showHint(player, "⏩ +10s");  
-    });  
-  
-    volUp?.addEventListener("click", ()=> bumpVolume(0.1));  
-    volDown?.addEventListener("click", ()=> bumpVolume(-0.1));  
-  
-    muteBtnV.addEventListener("click", ()=>{  
-      video.muted = !video.muted;  
-      setMuteIconV();  
-    });  
-  
-    fullBtn.addEventListener("click", togglePlayerFullscreen);  
-  
-   function updateFsIcon(){  
-  const fs = !!getFsEl();  
-  const icon = fullBtn.querySelector(".p5-full-icon");  
-  if(icon){  
-    icon.src = fs ? "expand-arrows-two-icon.png" : "expand-icon.png";  
-    icon.alt = fs ? "Exit fullscreen" : "Fullscreen";  
-  }  
-  fullBtn.setAttribute("aria-label", fs ? "Exit fullscreen" : "Fullscreen");  
-}  
-    player._updateFsIcon = updateFsIcon;  
-    updateFsIcon();  
-  
-    // ✅ pause bg music when video plays, resume after pause/ended (only if user enabled music)  
-    video.addEventListener("play", ()=>{  
-      setActive(player);  
-      if(musicUnlocked && userWantsMusic){  
-        safePause(); // ✅ also hides top music bar while video is playing  
-      }  
-      setPlayUI();  
-      if(CAN_HOVER) setCursor("precision");  
-    });  
-  
-    video.addEventListener("pause", ()=>{  
-      if(userWantsMusic && musicUnlocked){  
-        safePlay(); // ✅ shows bar again when bg music resumes  
-      }  
-      setPlayUI();  
-      if(CAN_HOVER) setCursor("precision");  
-    });  
-  
-    video.addEventListener("ended", ()=>{  
-      if(userWantsMusic && musicUnlocked){  
-        safePlay(); // ✅ shows bar again when bg music resumes  
-      }  
-      setPlayUI();  
-      if(CAN_HOVER) setCursor("precision");  
-    });  
-  
-    if(gestures){  
-      if(!isTouchDevice()){  
-        gestures.style.display = "none";  
-      }else{  
-        mid?.addEventListener("click", async ()=>{  
-          setActive(player);  
-          await ensureUnlocked();  
-          if(video.paused) video.play();  
-          else video.pause();  
-          showHint(player, video.paused ? "Paused" : "Play");  
-        });  
-  
-        let lastTapL = 0, lastTapR = 0;  
-        const dbl = 320;  
-  
-        left?.addEventListener("click", ()=>{  
-          setActive(player);  
-          const now = Date.now();  
-          if(now - lastTapL < dbl){  
-            video.currentTime = Math.max(0, video.currentTime - 10);  
-            showHint(player, "⏪ -10s");  
-          }  
-          lastTapL = now;  
-        });  
-  
-        right?.addEventListener("click", ()=>{  
-          setActive(player);  
-          const now = Date.now();  
-          if(now - lastTapR < dbl){  
-            video.currentTime = Math.min(video.duration || Infinity, video.currentTime + 10);  
-            showHint(player, "⏩ +10s");  
-          }  
-          lastTapR = now;  
-        });  
-  
-        let pressTimer = null;  
-        mid?.addEventListener("touchstart", ()=>{  
-          pressTimer = setTimeout(()=>{  
-            togglePlayerFullscreen();  
-            showHint(player, "Fullscreen");  
-          }, 520);  
-        }, {passive:true});  
-  
-        mid?.addEventListener("touchend", ()=> clearTimeout(pressTimer), {passive:true});  
-        mid?.addEventListener("touchmove", ()=> clearTimeout(pressTimer), {passive:true});  
-      }  
-    }  
-  
-    setMuteIconV();  
-    setPlayUI();  
-  });  
-  
-  document.addEventListener("fullscreenchange", ()=>{  
-    document.querySelectorAll(".p5-player").forEach(p=> p._updateFsIcon?.());  
-    ensureGifCursorInRightPlace();  
-  });  
-  document.addEventListener("webkitfullscreenchange", ()=>{  
-    document.querySelectorAll(".p5-player").forEach(p=> p._updateFsIcon?.());  
-    ensureGifCursorInRightPlace();  
-  });  
-  
-  if(!activePlayer){  
-    const first = document.querySelector(".p5-player");  
-    if(first) setActive(first);  
-  }  
-   /* ==========================================================
-   ✅ TWO EDITORS: Mobile (--m-*) + Desktop (--d-*)
-   Fixes "0" bug by using real defaults, not computedStyle.
-   ========================================================== */
-(function(){
-
-  const root = document.documentElement;
-
-  // ---------- MOBILE ----------
-  const panelM = document.getElementById("p5LayoutPanel");          // your existing mobile panel
-  const toggleM = document.getElementById("p5EditorToggle");         // your existing mobile toggle button
-
-  const STORAGE_M = "p5_mobile_layout_v2";
-
-  const DEFAULTS_M = {
-    "--m-frame-h": "85px",
-    "--m-cover": "54px",
-    "--m-icon": "8px",
-    "--m-play": "33px",
-    "--m-title": "11px",
-    "--m-artist": "9px",
-    "--m-vol-w": "88px",
-    "--m-seek-w": "132%",
-
-    "--m-frame-x": "0px",
-    "--m-frame-y": "0px",
-    "--m-cover-x": "0px",
-    "--m-cover-y": "-25px",
-    "--m-meta-x": "0px",
-    "--m-meta-y": "0px",
-    "--m-actions-x": "10px",
-    "--m-actions-y": "-5px",
-    "--m-mid-x": "0px",
-    "--m-mid-y": "10px",
-    "--m-bottom-x": "-65px",
-    "--m-bottom-y": "-14px",
-  };
-
-  // ---------- DESKTOP ----------
-  const panelD = document.getElementById("p5LayoutPanelDesktop");
-  const toggleD = document.getElementById("p5EditorToggleDesktop");
-
-  const STORAGE_D = "p5_desktop_layout_v1";
-
-  // These defaults match your CURRENT desktop layout (so editor never shows 0)
-  const DEFAULTS_D = {
-    "--d-player-width": "760px",
-    "--d-player-top": "12px",          // note: calc() can't be a number input, so we keep top fixed in CSS
-    "--d-frame-h": "105px",
-    "--d-cover": "122px",
-    "--d-title": "16px",
-    "--d-artist": "12px",
-    "--d-vol-w": "111px",
-
-    "--d-frame-x": "0px",
-    "--d-frame-y": "0px",
-    "--d-cover-x": "0px",
-    "--d-cover-y": "0px",
-    "--d-meta-x": "0px",
-    "--d-meta-y": "0px",
-    "--d-actions-x": "0px",
-    "--d-actions-y": "-20px",
-    "--d-mid-x": "250px",
-    "--d-mid-y": "0px",
-    "--d-bottom-x": "0px",
-    "--d-bottom-y": "-58px",
-  };
-
-  // ---------- helpers ----------
-  function setVar(name, value){
-    root.style.setProperty(name, value);
-  }
-
-  function getInlineOrDefault(name, defaults){
-    const inline = root.style.getPropertyValue(name).trim();
-    if(inline) return inline;
-    return defaults[name] || "0px";
-  }
-
-  function applyDefaults(defaults){
-    Object.entries(defaults).forEach(([k,v]) => setVar(k, v));
-  }
-
-  function loadSaved(storageKey, defaults){
-    const raw = localStorage.getItem(storageKey);
-    if(!raw){
-      applyDefaults(defaults);
-      return;
-    }
+/* ══ VIDEO PLAYERS ══ */
+function isTD(){return("ontouchstart"in window)||(navigator.maxTouchPoints>0);}
+function fmt(s){if(!isFinite(s))return"0:00";return`${Math.floor(s/60)}:${Math.floor(s%60).toString().padStart(2,"0")}`;}
+function hint(pl,txt){const h=pl.querySelector(".p5-hint");if(!h)return;h.textContent=txt;h.classList.add("show");clearTimeout(h._t);h._t=setTimeout(()=>h.classList.remove("show"),500);}
+function getFsEl(){return document.fullscreenElement||document.webkitFullscreenElement||null;}
+document.querySelectorAll(".p5-player").forEach(player=>{
+  const vid=player.querySelector(".p5-video"),bigPl=player.querySelector(".p5-bigplay"),
+    playB=player.querySelector(".p5-play"),muteB=player.querySelector(".p5-mute"),
+    fullB=player.querySelector(".p5-full"),prog=player.querySelector(".p5-progress"),
+    volS=player.querySelector(".p5-vol-slider"),timeCur=player.querySelector(".p5-time-cur"),
+    timeDur=player.querySelector(".p5-time-dur"),backB=player.querySelector(".p5-back"),
+    fwdB=player.querySelector(".p5-fwd"),gestures=player.querySelector(".p5-gestures"),
+    midZ=player.querySelector(".p5-mid"),leftZ=player.querySelector(".p5-left"),
+    rightZ=player.querySelector(".p5-right");
+  vid.volume=0.8;if(volS)volS.value=0.8;
+  if(!isTD()&&gestures){gestures.style.display="none";}
+  else if(gestures){gestures.style.display="flex";gestures.querySelectorAll(".p5-zone").forEach(z=>{z.style.pointerEvents="auto";});}
+  function setMuteUI(){const ic=muteB?.querySelector(".p5-mute-icon");if(!ic)return;ic.src=(vid.muted||vid.volume===0)?"volume muted.png":"volume on.png";}
+  function setPlayUI(){const pl=!vid.paused&&!vid.ended;bigPl.style.display=pl?"none":"grid";const pi=playB?.querySelector(".p5-icon-play");if(pi)pi.src=pl?"pause.png":"start.png";player.classList.toggle("playing",pl);}
+  function updSeek(){const pct=vid.duration?(vid.currentTime/vid.duration)*100:0;if(prog)prog.style.background=`linear-gradient(to right,rgba(200,0,26,0.88) 0%,rgba(200,0,26,0.88) ${pct}%,rgba(200,0,26,0.22) ${pct}%,rgba(200,0,26,0.22) 100%)`;}
+  bigPl.addEventListener("click",()=>vid.play());
+  playB?.addEventListener("click",()=>vid.paused?vid.play():vid.pause());
+  vid.addEventListener("play",setPlayUI);vid.addEventListener("pause",setPlayUI);vid.addEventListener("ended",setPlayUI);
+  vid.addEventListener("loadedmetadata",()=>{if(timeDur)timeDur.textContent=fmt(vid.duration);});
+  vid.addEventListener("timeupdate",()=>{if(timeCur)timeCur.textContent=fmt(vid.currentTime);if(vid.duration&&prog)prog.value=(vid.currentTime/vid.duration)*100;updSeek();});
+  prog?.addEventListener("input",()=>{if(vid.duration)vid.currentTime=(Number(prog.value)/100)*vid.duration;});
+  volS?.addEventListener("input",()=>{vid.volume=Number(volS.value);vid.muted=vid.volume===0;setMuteUI();});
+  muteB?.addEventListener("click",()=>{if(vid.muted||vid.volume===0){vid.muted=false;if(vid.volume===0)vid.volume=0.8;if(volS)volS.value=vid.volume;}else{vid.muted=true;if(volS)volS.value=0;}setMuteUI();});
+  backB?.addEventListener("click",()=>{vid.currentTime=Math.max(0,vid.currentTime-10);hint(player,"<< -10s");});
+  fwdB?.addEventListener("click",()=>{vid.currentTime=Math.min(vid.duration||Infinity,vid.currentTime+10);hint(player,">> +10s");});
+  function isMobileDevice(){return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)||window.innerWidth<=820;}
+  function enterFakeFullscreen(){player.classList.add("fs-mode");document.body.classList.add("no-scroll");updFsIcon();}
+  function exitFakeFullscreen(){player.classList.remove("fs-mode");document.body.classList.remove("no-scroll");updFsIcon();}
+  async function toggleFS(){
+    const fe=getFsEl(),fakeFs=player.classList.contains("fs-mode");
     try{
-      const saved = JSON.parse(raw);
-      Object.entries(defaults).forEach(([k,def])=>{
-        setVar(k, saved[k] || def);
-      });
-    }catch(e){
-      applyDefaults(defaults);
-    }
+      if(fakeFs){exitFakeFullscreen();return;}
+      if(fe){if(document.exitFullscreen)await document.exitFullscreen();else if(document.webkitExitFullscreen)await document.webkitExitFullscreen();return;}
+      if(isMobileDevice()){if(player.requestFullscreen){try{await player.requestFullscreen();return;}catch(e){}}if(player.webkitRequestFullscreen){try{await player.webkitRequestFullscreen();return;}catch(e){}}enterFakeFullscreen();return;}
+      if(player.requestFullscreen){await player.requestFullscreen();return;}
+      if(player.webkitRequestFullscreen){await player.webkitRequestFullscreen();return;}
+    }catch(e){enterFakeFullscreen();}
   }
-
-  function saveNow(storageKey, defaults){
-    const out = {};
-    Object.keys(defaults).forEach(k => out[k] = getInlineOrDefault(k, defaults));
-    localStorage.setItem(storageKey, JSON.stringify(out));
+  fullB?.addEventListener("click",toggleFS);
+  document.addEventListener("keydown",e=>{if(e.key==="Escape"&&player.classList.contains("fs-mode"))exitFakeFullscreen();});
+  function updFsIcon(){const fs=!!getFsEl()||player.classList.contains("fs-mode");const ic=fullB?.querySelector(".p5-full-icon");if(ic)ic.src=fs?"expand-arrows-two-icon.png":"expand-icon.png";}
+  player._updFS=updFsIcon;updFsIcon();
+  vid.addEventListener("webkitbeginfullscreen",updFsIcon);vid.addEventListener("webkitendfullscreen",updFsIcon);
+  if(isTD()){
+    midZ?.addEventListener("click",()=>{if(vid.paused){vid.play();hint(player,"PLAY");}else{vid.pause();hint(player,"PAUSED");}});
+    let ltL=0,ltR=0;const dbl=320;
+    leftZ?.addEventListener("click",()=>{const n=Date.now();if(n-ltL<dbl){vid.currentTime=Math.max(0,vid.currentTime-10);hint(player,"<< -10s");}ltL=n;});
+    rightZ?.addEventListener("click",()=>{const n=Date.now();if(n-ltR<dbl){vid.currentTime=Math.min(vid.duration||Infinity,vid.currentTime+10);hint(player,">> +10s");}ltR=n;});
   }
-
-  function bindPanel(panel, defaults, storageKey){
-    if(!panel) return;
-
-    const inputs = panel.querySelectorAll("[data-var]");
-
-    function syncInputs(){
-      inputs.forEach(inp=>{
-        const v = inp.dataset.var;
-        const cur = getInlineOrDefault(v, defaults);
-        inp.value = parseFloat(cur) || parseFloat(defaults[v]) || 0;
-      });
-    }
-
-    inputs.forEach(inp=>{
-      const onChange = ()=>{
-        const v = inp.dataset.var;
-        const unit = inp.dataset.unit || "px";
-        const n = Number(inp.value);
-        if(!Number.isFinite(n)) return;
-
-        setVar(v, unit === "%" ? `${n}%` : `${n}px`);
-        saveNow(storageKey, defaults);
-      };
-
-      inp.addEventListener("input", onChange);
-      inp.addEventListener("change", onChange);
-    });
-
-    // initial sync
-    syncInputs();
-
-    return { syncInputs };
-  }
-
-  // ---------- INIT MOBILE ----------
-  if(panelM && toggleM){
-    loadSaved(STORAGE_M, DEFAULTS_M);
-    const mobile = bindPanel(panelM, DEFAULTS_M, STORAGE_M);
-
-    toggleM.addEventListener("pointerup", (e)=>{
-      e.preventDefault();
-      document.body.classList.toggle("p5-layout-edit");
-      // make sure values show correctly when opening
-      mobile?.syncInputs?.();
-    });
-
-    document.getElementById("p5ResetMobileCSS")?.addEventListener("click", ()=>{
-      localStorage.removeItem(STORAGE_M);
-      applyDefaults(DEFAULTS_M);
-      mobile?.syncInputs?.();
-    });
-
-    document.getElementById("p5CopyMobileCSS")?.addEventListener("click", async ()=>{
-      let css = `@media (max-width: 820px) and (hover: none) and (pointer: coarse) {\n  :root{\n`;
-      Object.keys(DEFAULTS_M).forEach(k=>{
-        css += `    ${k}: ${getInlineOrDefault(k, DEFAULTS_M)};\n`;
-      });
-      css += "  }\n}";
-      try{
-        await navigator.clipboard.writeText(css);
-        alert("Copied Mobile CSS! Paste into your CSS to keep forever.");
-      }catch(e){
-        console.log(css);
-        alert("Clipboard blocked. CSS printed in console.");
-      }
-    });
-  }
-
-  // ---------- INIT DESKTOP ----------
-  if(panelD && toggleD){
-    loadSaved(STORAGE_D, DEFAULTS_D);
-    const desk = bindPanel(panelD, DEFAULTS_D, STORAGE_D);
-
-    toggleD.addEventListener("pointerup", (e)=>{
-      e.preventDefault();
-      document.body.classList.toggle("p5-layout-edit-desktop");
-      desk?.syncInputs?.();
-    });
-
-    document.getElementById("p5ResetDesktopCSS")?.addEventListener("click", ()=>{
-      localStorage.removeItem(STORAGE_D);
-      applyDefaults(DEFAULTS_D);
-      desk?.syncInputs?.();
-    });
-
-    document.getElementById("p5CopyDesktopCSS")?.addEventListener("click", async ()=>{
-      let css = `@media (min-width: 821px) and (hover:hover) and (pointer:fine) {\n  :root{\n`;
-      Object.keys(DEFAULTS_D).forEach(k=>{
-        css += `    ${k}: ${getInlineOrDefault(k, DEFAULTS_D)};\n`;
-      });
-      css += "  }\n}";
-      try{
-        await navigator.clipboard.writeText(css);
-        alert("Copied Desktop CSS! Paste into your CSS to keep forever.");
-      }catch(e){
-        console.log(css);
-        alert("Clipboard blocked. CSS printed in console.");
-      }
-    });
-  }
-
-})();
-    
-    window.addEventListener("resize", () => {
-  const t = TRACKS[currentIndex];
-  const title = t?.title || t?.src || "";
-  if(title) applySmartMarquee(titleEl, title);
+  setMuteUI();setPlayUI();
 });
-
-    /* 🔥 RANDOM MOBILE CHARACTER */
-window.addEventListener("load", () => {
-  if (window.innerWidth > 768) return;
-
-  const leftChar = document.querySelector(".character.enkidu-left");
-  const rightChar = document.querySelector(".character.enkidu-right");
-  if (!leftChar || !rightChar) return;
-
-  leftChar.style.display = "none";
-  rightChar.style.display = "none";
-
-  if (Math.random() < 0.5) {
-    leftChar.style.display = "block";
-  } else {
-    rightChar.style.display = "block";
-  }
-});
-
-    
-</script>  
-</body>  
+["fullscreenchange","webkitfullscreenchange"].forEach(ev=>document.addEventListener(ev,()=>document.querySelectorAll(".p5-player").forEach(p=>p._updFS?.())));
+window.addEventListener("resize",()=>document.querySelectorAll(".p5-player").forEach(p=>p._updFS?.()));
+try{history.scrollRestoration="manual";}catch(e){}
+window.addEventListener("load",()=>{if(location.hash)history.replaceState(null,"",location.pathname+location.search);window.scrollTo(0,0);});
+</script>
+</body>
 </html>
